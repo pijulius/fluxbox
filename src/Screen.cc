@@ -975,6 +975,8 @@ void BScreen::changeWorkspaceID(unsigned int id, bool revert) {
     Workspace *old = currentWorkspace();
     m_current_workspace = getWorkspace(id);
 
+    m_currentworkspace_sig.emit(*this);
+
     // we show new workspace first in order to appear faster
     currentWorkspace()->showAll();
 
@@ -1003,8 +1005,6 @@ void BScreen::changeWorkspaceID(unsigned int id, bool revert) {
 
     Fluxbox::instance()->ungrab();
     FbTk::App::instance()->sync(false);
-
-    m_currentworkspace_sig.emit(*this);
 
     // do this after atom handlers, so scripts can access new workspace number
     Fluxbox::instance()->keys()->doAction(FocusIn, 0, 0, Keys::ON_DESKTOP);
