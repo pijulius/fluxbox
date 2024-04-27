@@ -272,7 +272,8 @@ Fluxbox::Fluxbox(int argc, char **argv,
       m_masked_window(0),
       m_argv(argv), m_argc(argc),
       m_showing_dialog(false),
-      m_server_grabs(0) {
+      m_server_grabs(0),
+      m_shortcut_manager(new ShortcutManager) {
 
     _FB_USES_NLS;
 
@@ -862,7 +863,7 @@ void Fluxbox::handleClientMessage(XClientMessageEvent &ce) {
     if (ce.message_type)
         atom = XGetAtomName(FbTk::App::instance()->display(), ce.message_type);
 
-    fbdbg<<__FILE__<<"("<<__LINE__<<"): ClientMessage. data.l[0]=0x"<<hex<<ce.data.l[0]<<
+    fbdbg << "ClientMessage. data.l[0]=0x"<<hex<<ce.data.l[0]<<
         "  message_type=0x"<<ce.message_type<<dec<<" = \""<<atom<<"\""<<endl;
 
     if (ce.message_type && atom) XFree((char *) atom);
@@ -1151,7 +1152,7 @@ void Fluxbox::save_rc() {
     XrmPutFileDatabase(old_rc, dbfile.c_str());
     XrmDestroyDatabase(old_rc);
 
-    fbdbg<<__FILE__<<"("<<__LINE__<<"): ------------ SAVING DONE"<<endl;
+    fbdbg <<"------------ SAVING DONE"<<endl;
 
 }
 
