@@ -567,7 +567,8 @@ void FluxboxWindow::init() {
         }
         m_workspace_number = twin->workspaceNumber();
         const int x = twin->frame().x() + int(twin->frame().width() - frame().width())/2;
-        const int y = twin->frame().y() + int(twin->frame().height() - frame().height())/2;
+        const int ax = Remember::instance().isRememberedY(winClient());
+        const int y = twin->frame().y() + (!twin->winClient().isTransient()?(ax > 0?ax:frame().titlebar().height()):0);
         frame().move(x, y);
         sanitizePosition();
         m_placed = true;
@@ -2533,7 +2534,7 @@ void FluxboxWindow::motionNotifyEvent(XMotionEvent &me) {
         e.xmotion.y = me.y_root;
     }
 
-    if (moving || m_attaching_tab) {
+    if (moving) {
 
         XEvent e;
 
@@ -3424,6 +3425,7 @@ void FluxboxWindow::startTabbing(const XButtonEvent &be) {
         m_last_resize_h = frame().height() + bw;
     }
 
+    if (!screen().doOpaqueMove())
     parent().drawRectangle(screen().rootTheme()->opGC(),
                            m_last_move_x, m_last_move_y,
                            m_last_resize_w, m_last_resize_h);
@@ -3435,6 +3437,7 @@ void FluxboxWindow::attachTo(int x, int y, bool interrupted) {
     if (m_attaching_tab == 0)
         return;
 
+    if (!screen().doOpaqueMove())
     parent().drawRectangle(screen().rootTheme()->opGC(),
                            m_last_move_x, m_last_move_y,
                            m_last_resize_w, m_last_resize_h);

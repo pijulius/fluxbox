@@ -1210,6 +1210,8 @@ void Remember::rememberAttrib(WinClient &winclient, Attribute attrib) {
         app->rememberHead(win->screen().getHead(win->fbWindow()));
         break;
     case REM_DIMENSIONS: {
+        app->rememberDimensions(win->normalWidth(), win->normalHeight(), false, false);
+        break;
         head = win->screen().getHead(win->fbWindow());
         percx = win->screen().calRelativeDimensionWidth(head, win->normalWidth());
         percy = win->screen().calRelativeDimensionHeight(head, win->normalHeight());
@@ -1217,6 +1219,11 @@ void Remember::rememberAttrib(WinClient &winclient, Attribute attrib) {
         break;
     }
     case REM_POSITION: {
+        int head = win->screen().getHead(win->fbWindow());
+        int head_x = win->screen().maxLeft(head);
+        int head_y = win->screen().maxTop(head);
+        app->rememberPosition(win->normalX() - head_x, win->normalY() - head_y, false, false);
+        break;
         head = win->screen().getHead(win->fbWindow());
         percx = win->screen().calRelativePositionWidth(head, win->normalX());
         percy = win->screen().calRelativePositionHeight(head, win->normalY());
@@ -1352,8 +1359,11 @@ void Remember::forgetAttrib(WinClient &winclient, Attribute attrib) {
 void Remember::setupFrame(FluxboxWindow &win) {
     WinClient &winclient = win.winClient();
     Application *app = find(winclient);
-    if (app == 0)
+    if (app == 0) {
+        if (!winclient.screen().isRestart() && (win.decorationMask() & (WindowState::DECORM_BORDER|WindowState::DECORM_HANDLE|WindowState::DECORM_TITLEBAR)))
+            win.setOnHead(win.screen().getCurrHead());
         return; // nothing to do
+    }
 
     // first, set the options that aren't preserved as window properties on
     // restart, then return if fluxbox is restarting -- we want restart to
@@ -1389,6 +1399,8 @@ void Remember::setupFrame(FluxboxWindow &win) {
 
     if (app->head_remember) {
         win.setOnHead(app->head);
+    } else {
+        win.setOnHead(win.screen().getCurrHead());
     }
 
     if (app->dimensions_remember) {
@@ -1552,3 +1564,8 @@ FbTk::Menu* Remember::createMenu(BScreen& screen) {
     return createRememberMenu(screen);
 }
 
+int Remember::isRememberedY(WinClient &winclient) {
+    Application *app = find(winclient);
+    if (!app || app->y <= 0) return 0;
+    return app->y;
+}

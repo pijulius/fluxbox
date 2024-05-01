@@ -115,6 +115,7 @@ public:
     void save();
 
     bool isRemembered(WinClient &win, Attribute attrib);
+    int isRememberedY(WinClient &win);
     void rememberAttrib(WinClient &win, Attribute attrib);
     void forgetAttrib(WinClient &win, Attribute attrib);
 
