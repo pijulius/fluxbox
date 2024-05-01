@@ -142,6 +142,7 @@ FbWinFrame::FbWinFrame(BScreen &screen, unsigned int client_depth,
     m_use_tabs(true),
     m_use_handle(true),
     m_visible(false),
+    m_tab_visible(false),
     m_tabmode(screen.getDefaultInternalTabs()?INTERNAL:EXTERNAL),
     m_active_orig_client_bw(0),
     m_need_render(true),
@@ -179,7 +180,8 @@ bool FbWinFrame::setTabMode(TabMode tabmode) {
 
         // TODO: tab position
         if (m_use_tabs && m_visible)
-            tabs.show();
+            if (m_tab_container.size() > 1)
+                tabs.show();
         else {
             ret = false;
             tabs.hide();
@@ -225,6 +227,7 @@ void FbWinFrame::hide() {
         m_tab_container.hide();
 
     m_visible = false;
+    m_tab_visible = false;
 }
 
 void FbWinFrame::show() {
@@ -236,8 +239,10 @@ void FbWinFrame::show() {
         clearAll();
     }
 
-    if (m_tabmode == EXTERNAL && m_use_tabs)
+    if (m_tabmode == EXTERNAL && m_use_tabs && m_tab_container.size() > 1) {
+        m_tab_visible = true;
         m_tab_container.show();
+    }
 
     m_window.showSubwindows();
     m_window.show();
@@ -384,7 +389,8 @@ void FbWinFrame::alignTabs() {
         if (m_visible && m_use_tabs) {
             applyTabContainer();
             tabs.clear();
-            tabs.show();
+            if (m_tab_container.size() > 1)
+                tabs.show();
         }
     }
 
@@ -679,7 +685,7 @@ bool FbWinFrame::showTabs() {
     }
 
     m_use_tabs = true;
-    if (m_visible)
+    if (m_visible && m_tab_container.size() > 1)
         m_tab_container.show();
     return true;
 }
@@ -1298,6 +1304,16 @@ void FbWinFrame::applyTabContainer() {
     for (; btn_it != btn_it_end; ++btn_it) {
         IconButton *btn = static_cast<IconButton *>(*btn_it);
         btn->reconfigTheme();
+    }
+
+    if (m_tab_container.size() > 1) {
+        if (m_visible && !m_tab_visible) {
+            m_tab_visible = true;
+            m_tab_container.show();
+        }
+    } else if (m_tab_visible) {
+        m_tab_visible = false;
+        m_tab_container.hide();
     }
 }
 

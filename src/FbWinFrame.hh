@@ -323,6 +323,7 @@ private:
     bool m_use_tabs; ///< if we should use tabs (turns them off in external mode only)
     bool m_use_handle; ///< if we should use handle
     bool m_visible; ///< if we are currently showing
+    bool m_tab_visible;
     ///< do we use screen or window alpha settings ? (0 = window, 1 = default, 2 = default and window never set)
 
     /**
