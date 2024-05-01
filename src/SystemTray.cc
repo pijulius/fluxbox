@@ -359,14 +359,14 @@ unsigned int SystemTray::width() const {
     if (orientation() == FbTk::ROT90 || orientation() == FbTk::ROT270)
         return m_window.width();
 
-    return m_num_visible_clients * (height() + 2 * m_theme->border().width());
+    return m_num_visible_clients * (height());
 }
 
 unsigned int SystemTray::height() const {
     if (orientation() == FbTk::ROT0 || orientation() == FbTk::ROT180)
         return m_window.height();
 
-    return m_num_visible_clients * (width() + 2 * m_theme->border().width());
+    return m_num_visible_clients * (width());
 }
 
 unsigned int SystemTray::borderWidth() const {
@@ -541,7 +541,7 @@ void SystemTray::rearrangeClients() {
     unsigned int w_rot0 = width(), h_rot0 = height();
     const unsigned int bw = m_theme->border().width();
     FbTk::translateSize(orientation(), w_rot0, h_rot0);
-    unsigned int trayw = m_num_visible_clients*h_rot0 + bw, trayh = h_rot0;
+    unsigned int trayw = m_num_visible_clients*h_rot0, trayh = h_rot0;
     FbTk::translateSize(orientation(), trayw, trayh);
     resize(trayw, trayh);
     update();
@@ -549,19 +549,19 @@ void SystemTray::rearrangeClients() {
     // move and resize clients
     ClientList::iterator client_it = m_clients.begin();
     ClientList::iterator client_it_end = m_clients.end();
-    int next_x = bw;
+    int next_x = 0;
     for (; client_it != client_it_end; ++client_it) {
         if (!(*client_it)->isVisible())
             continue;
-        int x = next_x, y = bw;
-        next_x += h_rot0+bw;
+        int x = next_x, y = 0;
+        next_x += h_rot0;
         translateCoords(orientation(), x, y, w_rot0, h_rot0);
         translatePosition(orientation(), x, y, h_rot0, h_rot0, 0);
         int screen_x = 0, screen_y = 0;
         getScreenCoordinates((*client_it)->window(), (*client_it)->x(), (*client_it)->y(), screen_x, screen_y);
 
-        (*client_it)->moveResize(x, y, h_rot0, h_rot0);
-        (*client_it)->sendConfigureNotify(screen_x, screen_y, h_rot0, h_rot0);
+        (*client_it)->moveResize(x+bw, y+bw, h_rot0-bw*2, h_rot0-bw*2);
+        (*client_it)->sendConfigureNotify(screen_x+bw, screen_y+bw, h_rot0-bw*2, h_rot0-bw*2);
     }
 }
 
