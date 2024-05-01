@@ -58,8 +58,9 @@ void TooltipWindow::raiseTooltip() {
 
     FbTk::Font& font = theme()->iconbarTheme().text().font();
 
-    int h = font.height() + theme()->bevelWidth() * 2;
-    int w = font.textWidth(m_lastText) + theme()->bevelWidth() * 2;
+    int bw = (theme()->titleHeight() - theme()->font().height());
+    int h = font.height() + bw;
+    int w = font.textWidth(m_lastText) + bw;
 
     Window root_ret; // not used
     Window window_ret; // not used
@@ -97,8 +98,8 @@ void TooltipWindow::raiseTooltip() {
     font.drawText(*this, screen().screenNumber(),
                   theme()->iconbarTheme().text().textGC(), 
                   m_lastText,
-                  theme()->bevelWidth(),
-                  theme()->bevelWidth() + font.ascent());
+                  bw/2,
+                  bw/2 + font.ascent());
 }
 
 void TooltipWindow::updateText(const FbTk::BiDiString& text) {

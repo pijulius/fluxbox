@@ -59,7 +59,7 @@ void OSDWindow::reconfigTheme() {
 
 void OSDWindow::resizeForText(const FbTk::BiDiString &text) {
 
-    int bw = 2 * m_theme->bevelWidth();
+    int bw = (m_theme->titleHeight() - m_theme->font().height());
     int h = m_theme->font().height() + bw;
     int w = m_theme->font().textWidth(text) + bw;
     FbTk::FbWindow::resize(w, h);
@@ -68,10 +68,11 @@ void OSDWindow::resizeForText(const FbTk::BiDiString &text) {
 void OSDWindow::showText(const FbTk::BiDiString &text) {
     show();
     clear();
+    int bw = (m_theme->titleHeight() - m_theme->font().height());
     m_theme->font().drawText(*this, m_screen.screenNumber(),
             m_theme->iconbarTheme().text().textGC(), text,
-            m_theme->bevelWidth(),
-            m_theme->bevelWidth() + m_theme->font().ascent());
+            bw/2,
+            bw/2 + m_theme->font().ascent());
 }
 
 void OSDWindow::show() {
