@@ -25,6 +25,7 @@
 #include "Screen.hh"
 #include "WindowCmd.hh"
 #include "FbTk/AutoReloadHelper.hh"
+#include <X11/Xatom.h>
 
 namespace {
 
@@ -42,6 +43,12 @@ FbMenu::FbMenu(FbTk::ThemeProxy<FbTk::MenuTheme> &tm,
     m_layeritem(fbwindow(), layer) {
 
     fbwindow().setWindowRole("fluxbox-menu");
+
+    Display *dpy = Fluxbox::instance()->display();
+    Atom type_atom = XInternAtom(dpy, "_NET_WM_WINDOW_TYPE", 0);
+    Atom toolbar_atom = XInternAtom(dpy, "_NET_WM_WINDOW_TYPE_MENU", 0);
+    XChangeProperty(dpy, fbwindow().window(), type_atom, XA_ATOM, 32, PropModeReplace,
+        (unsigned char *)&toolbar_atom, 1);
 }
 
 void FbMenu::buttonPressEvent(XButtonEvent &be) {
