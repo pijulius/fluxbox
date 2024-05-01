@@ -54,6 +54,7 @@ MenuTheme::MenuTheme(int screen_num):
     titlefont_justify(*this, "menu.title.justify", "Menu.Title.Justify"),
     bullet_pos(*this, "menu.bullet.position", "Menu.Bullet.Position"),
     m_bullet(*this, "menu.bullet", "Menu.Bullet"),
+    m_frame_vspace(*this, "menu.frame.vSpace", "Menu.Frame.VSpace"),
     m_shapeplace(*this, "menu.roundCorners", "Menu.RoundCorners"),
     m_title_height(*this, "menu.titleHeight", "Menu.TitleHeight"),
     m_item_height(*this, "menu.itemHeight", "Menu.ItemHeight"),

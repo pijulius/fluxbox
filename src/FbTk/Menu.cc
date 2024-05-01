@@ -459,12 +459,20 @@ void Menu::updateMenu() {
     }
 
     int itmp = ih * m_rows_per_column;
+    itmp += theme()->frameVSpace();
     m_frame.height = std::max(1, itmp);
 
     unsigned int new_width = (m_columns * m_item_w);
     unsigned int new_height = m_frame.height;
 
-    if (m_title.visible)
+    if (theme()->frameVSpace()) {
+        if (m_title.visible)
+            th += theme()->frameVSpace();
+        else
+            th = theme()->frameVSpace();
+    }
+
+    if (m_title.visible || theme()->frameVSpace())
         new_height += th + ((m_frame.height > 0) ? tbw : 0);
 
 
@@ -505,14 +513,14 @@ void Menu::updateMenu() {
     }
 
     int y = 0;
-    if (m_title.visible) {
+    if (m_title.visible || theme()->frameVSpace()) {
         m_title.win.moveResize(-tbw, -tbw, w + tbw, th);
         y = m_title.win.y() + m_title.win.height() + 2 * tbw;
     }
 
     m_frame.win.moveResize(0, y, w, m_frame.height);
 
-    if (m_title.visible && m_need_update) {
+    if ((m_title.visible || theme()->frameVSpace()) && m_need_update) {
         renderMenuPixmap(m_title.pixmap, &m_title.win,
                 w, th, theme()->titleTexture(), m_image_ctrl);
     }

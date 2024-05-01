@@ -107,6 +107,7 @@ public:
     unsigned int titleHeight(bool fontConstrained = false) const {
         return fontConstrained ? m_real_title_height : *m_title_height;
     }
+    unsigned int frameVSpace() const { return *m_frame_vspace; }
     unsigned int itemHeight() const { return m_real_item_height; }
     unsigned int borderWidth() const { return *m_border_width; }
     unsigned int bevelWidth() const { return *m_bevel_width; }
@@ -148,6 +149,7 @@ private:
     ThemeItem<Justify> bullet_pos;
     ThemeItem<BulletType> m_bullet;
     ThemeItem<Shape::ShapePlace> m_shapeplace;
+    ThemeItem<unsigned int> m_frame_vspace;
     ThemeItem<unsigned int> m_title_height, m_item_height;
     ThemeItem<unsigned int> m_border_width;
     ThemeItem<unsigned int> m_bevel_width;
