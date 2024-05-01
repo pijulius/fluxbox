@@ -35,6 +35,7 @@
 #include "ShortcutManager.hh"
 
 #include <X11/Xresource.h>
+#include <X11/extensions/Xdamage.h>
 
 #ifdef TIME_WITH_SYS_TIME
 #include <sys/time.h>
@@ -192,6 +193,7 @@ private:
     std::string getRcFilename();
     void load_rc();
     void real_reconfigure();
+    void handleDamage(XDamageNotifyEvent *xe);
     void handleEvent(XEvent *xe);
     void handleUnmapNotify(XUnmapEvent &ue);
     void handleClientMessage(XClientMessageEvent &ce);

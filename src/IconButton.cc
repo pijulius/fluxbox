@@ -152,7 +152,7 @@ void IconButton::setPixmap(bool use) {
 void IconButton::reconfigTheme() {
 
     setFont(m_theme->text().font());
-    setGC(m_theme->text().textGC());
+    setGC((m_win.isLight()?m_theme->lightText().textGC():m_theme->text().textGC()));
     setBorderWidth(m_theme->border().width());
     setBorderColor(m_theme->border().color());
     setJustify(m_theme->text().justify());
@@ -160,7 +160,7 @@ void IconButton::reconfigTheme() {
 
     if (m_theme->texture().usePixmap()) {
         m_pm.reset(m_win.screen().imageControl().renderImage(
-                           width(), height(), m_theme->texture(),
+                           width(), height(), (m_win.isLight()?m_theme->lightTexture():m_theme->texture()),
                            orientation()));
         setBackgroundPixmap(m_pm);
     } else{

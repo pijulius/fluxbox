@@ -28,9 +28,11 @@ IconbarTheme::IconbarTheme(int screen_num,
                            const std::string &altname):
     FbTk::Theme(screen_num),
     m_texture(*this, name, altname),
+    m_light_texture(*this, name + ".light", altname + ".Light"),
     m_empty_texture(*this, name + ".empty", altname + ".Empty"),
     m_border(*this, name, altname),
     m_text(*this, name, altname),
+    m_light_text(*this, name + ".light", altname + ".Light"),
     m_name(name), m_altname(altname) {
 
     FbTk::ThemeManager::instance().loadTheme(*this);
@@ -43,6 +45,7 @@ IconbarTheme::~IconbarTheme() {
 
 void IconbarTheme::reconfigTheme() {
     m_text.updateTextColor();
+    m_light_text.updateTextColor();
 }
 
 // fallback resources

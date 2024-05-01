@@ -39,6 +39,41 @@ public:
 
     void reconfigTheme();
 
+    const FbTk::PixmapWithMask &lightClosePixmap() const { return *m_light_close_pm; }
+    FbTk::PixmapWithMask &lightClosePixmap() { return *m_light_close_pm; }
+
+    const FbTk::PixmapWithMask &lightMaximizePixmap() const { return *m_light_maximize_pm; }
+    FbTk::PixmapWithMask &lightMaximizePixmap() { return *m_light_maximize_pm; }
+
+    const FbTk::PixmapWithMask &lightIconifyPixmap() const { return *m_light_iconify_pm; }
+    FbTk::PixmapWithMask &lightIconifyPixmap() { return *m_light_iconify_pm; }
+
+    const FbTk::PixmapWithMask &lightStickPixmap() const { return *m_light_stick_pm; }
+    FbTk::PixmapWithMask &lightStickPixmap() { return *m_light_stick_pm; }
+
+    const FbTk::PixmapWithMask &lightStuckPixmap() const { return *m_light_stuck_pm; }
+    FbTk::PixmapWithMask &lightStuckPixmap() { return *m_light_stuck_pm; }
+
+    const FbTk::PixmapWithMask &lightShadePixmap() const { return *m_light_shade_pm; }
+    FbTk::PixmapWithMask &lightShadePixmap() { return *m_light_shade_pm; }
+
+    const FbTk::PixmapWithMask &lightUnshadePixmap() const { return *m_light_unshade_pm; }
+    FbTk::PixmapWithMask &lightUnshadePixmap() { return *m_light_unshade_pm; }
+
+    const FbTk::PixmapWithMask &lightMenuiconPixmap() const { return *m_light_menuicon_pm; }
+    FbTk::PixmapWithMask &lightMenuiconPixmap() { return *m_light_menuicon_pm; }
+
+    FbTk::PixmapWithMask &lightTitlePixmap() { return *m_light_title_pm; }
+    const FbTk::PixmapWithMask &lightTitlePixmap() const { return *m_light_title_pm; }
+
+
+    FbTk::PixmapWithMask &lightLeftHalfPixmap() { return *m_light_lefthalf_pm; }
+    const FbTk::PixmapWithMask &lightLeftHalfPixmap() const { return *m_light_lefthalf_pm; }
+
+    FbTk::PixmapWithMask &lightRightHalfPixmap() { return *m_light_righthalf_pm; }
+    const FbTk::PixmapWithMask &lightRightHalfPixmap() const { return *m_light_righthalf_pm; }
+
+
     const FbTk::PixmapWithMask &closePixmap() const { return *m_close_pm; }
     FbTk::PixmapWithMask &closePixmap() { return *m_close_pm; }
 
@@ -80,6 +115,10 @@ public:
     virtual const WinButtonTheme &operator *() const { return *this; }
 
 private:
+
+    FbTk::ThemeItem<FbTk::PixmapWithMask> m_light_close_pm, m_light_maximize_pm,
+            m_light_iconify_pm, m_light_shade_pm, m_light_unshade_pm, m_light_menuicon_pm, m_light_title_pm,
+            m_light_stick_pm, m_light_stuck_pm, m_light_lefthalf_pm, m_light_righthalf_pm;
 
     FbTk::ThemeItem<FbTk::PixmapWithMask> m_close_pm, m_maximize_pm,
             m_iconify_pm, m_shade_pm, m_unshade_pm, m_menuicon_pm, m_title_pm,

@@ -212,6 +212,7 @@ AS_IF([test x$have_x11 = "xno"], [
 	AC_MSG_ERROR([Fluxbox requires the X Window System libraries and headers.])
 ])
 
+X11_LIBS="$X11_LIBS -lXdamage"
 CXXFLAGS="$X11_CFLAGS $CXXFLAGS"
 LIBS="$X11_LIBS $LIBS"
 

@@ -141,6 +141,38 @@ void WinButton::setPressedColor(const FbTk::Color &color) {
 }
 
 Pixmap WinButton::getPixmap(const FbTk::ThemeProxy<WinButtonTheme> &theme) const {
+    if (m_listen_to.winClient().isLight()) {
+        switch(m_type) {
+        case MAXIMIZE:
+            return theme->lightMaximizePixmap().pixmap().drawable();
+        case MINIMIZE:
+            return theme->lightIconifyPixmap().pixmap().drawable();
+        case STICK:
+            if (m_listen_to.isStuck())
+                return theme->lightStuckPixmap().pixmap().drawable();
+            else
+                return theme->lightStickPixmap().pixmap().drawable();
+        case CLOSE:
+            return theme->lightClosePixmap().pixmap().drawable();
+        case SHADE:
+            if (m_listen_to.isShaded())
+                return theme->lightUnshadePixmap().pixmap().drawable();
+            else
+                return theme->lightShadePixmap().pixmap().drawable();
+        case MENUICON:
+            if (m_icon_pixmap.drawable())
+                return theme->lightTitlePixmap().pixmap().drawable();
+            else
+                return theme->lightMenuiconPixmap().pixmap().drawable();
+        case LEFT_HALF:
+            return theme->lightLeftHalfPixmap().pixmap().drawable();
+        case RIGHT_HALF:
+            return theme->lightRightHalfPixmap().pixmap().drawable();
+        default:
+            return None;
+        }
+    }
+
     switch(m_type) {
     case MAXIMIZE:
         return theme->maximizePixmap().pixmap().drawable();

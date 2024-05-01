@@ -96,6 +96,7 @@ WinClient::WinClient(Window win, BScreen &screen, FluxboxWindow *fbwin):
                      m_icon_override(false),
                      m_window_type(WindowState::TYPE_NORMAL),
                      m_mwm_hint(0),
+                     m_damage(XDamageCreate(display(), window(), XDamageReportNonEmpty)),
                      m_strut(0) {
 
     old_bw = borderWidth();
@@ -133,6 +134,9 @@ WinClient::WinClient(Window win, BScreen &screen, FluxboxWindow *fbwin):
 
 WinClient::~WinClient() {
     fbdbg<<__FILE__<<"(~"<<__FUNCTION__<<")[this="<<this<<"]"<<endl;
+
+    if (m_damage != NULL)
+        XDamageDestroy(display(), m_damage);
 
     FbTk::EventManager::instance()->remove(window());
     Fluxbox *fluxbox = Fluxbox::instance();

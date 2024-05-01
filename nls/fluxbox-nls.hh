@@ -165,6 +165,7 @@ enum {
     RememberMinimized = 14,
     RememberMaximized = 15,
     RememberFullscreen = 16,
+    RememberIsLight = 17,
 
 	ScreenSet = 12,
 	ScreenAnotherWMRunning = 1,

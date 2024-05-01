@@ -28,6 +28,8 @@
 #include "FbTk/FbWindow.hh"
 #include "FbTk/FbString.hh"
 
+#include <X11/extensions/Xdamage.h>
+
 class BScreen;
 class Strut;
 
@@ -179,6 +181,7 @@ private:
     typedef std::map<Window, TransientList> TransientWaitMap;
     static TransientWaitMap s_transient_wait;
 
+    Damage m_damage;
 };
 
 #endif // WINCLIENT_HH

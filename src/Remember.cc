@@ -105,6 +105,7 @@ public:
     void forgetMinimizedstate() { minimizedstate_remember = false; }
     void forgetMaximizedstate() { maximizedstate_remember = false; }
     void forgetFullscreenstate() { fullscreenstate_remember = false; }
+    void forgetIsLight() { islight_remember = false; }
 
     void rememberWorkspace(int ws)
         { workspace = ws; workspace_remember = true; }
@@ -154,6 +155,8 @@ public:
         { maximizedstate = state; maximizedstate_remember = true; }
     void rememberFullscreenstate(bool state)
         { fullscreenstate = state; fullscreenstate_remember = true; }
+    void rememberIsLight(bool light)
+        { islight = light; islight_remember = true; }
 
     bool workspace_remember;
     unsigned int workspace;
@@ -217,6 +220,9 @@ public:
     bool fullscreenstate_remember;
     bool fullscreenstate;
 
+    bool islight_remember;
+    bool islight;
+
     bool is_transient, is_grouped;
     FbTk::RefCount<ClientPattern> group_pattern;
 
@@ -251,6 +257,7 @@ void Application::reset() {
         minimizedstate_remember =
         maximizedstate_remember =
         fullscreenstate_remember =
+        islight_remember =
         save_on_close_remember = false;
 }
 
@@ -348,6 +355,7 @@ FbTk::Menu *createRememberMenu(BScreen &screen) {
         { false, _FB_XTEXT(Remember, Maximized, "Maximized", "Remember maximized"), Remember::REM_MAXIMIZEDSTATE},
         { false, _FB_XTEXT(Remember, Fullscreen, "Fullscreen", "Remember fullscreen"), Remember::REM_FULLSCREENSTATE},
         { true,  _FB_XTEXT(Remember, Alpha, "Transparency", "Remember window tranparency settings"), Remember::REM_ALPHA},
+        { false, _FB_XTEXT(Remember, IsLight, "Theme Variant", "Remember Theme Variant"), Remember::REM_ISLIGHT},
         { false, _FB_XTEXT(Remember, Layer, "Layer", "Remember Layer"), Remember::REM_LAYER},
         { false, _FB_XTEXT(Remember, SaveOnClose, "Save on close", "Save remembered attributes on close"), Remember::REM_SAVEONCLOSE}
     };
@@ -356,6 +364,7 @@ FbTk::Menu *createRememberMenu(BScreen &screen) {
     // each fluxboxwindow has its own windowmenu
     // so we also create a remember menu just for it...
     FbTk::Menu *menu = MenuCreator::createMenu("Remember", screen);
+    menu->disableTitle();
     size_t i;
     for (i = 0; i < sizeof(_entries)/sizeof(_entries[0]); i++) {
         if (_entries[i].is_alpha && !needs_alpha) { // skip alpha-entry when not needed
@@ -593,6 +602,8 @@ int parseApp(ifstream &file, Application &app, string *first_line = 0) {
             app.rememberMaximizedstate(m);
         } else if (str_key == "fullscreen") {
             app.rememberFullscreenstate(str_label == "yes");
+        } else if (str_key == "islight") {
+            app.rememberIsLight(str_label == "yes");
         } else if (str_key == "jump") {
             app.rememberJumpworkspace(str_label == "yes");
         } else if (str_key == "close") {
@@ -1088,6 +1099,9 @@ void Remember::save() {
         if (a.fullscreenstate_remember) {
             apps_file << "  [Fullscreen]\t{" << ((a.fullscreenstate)?"yes":"no") << "}" << endl;
         }
+        if (a.islight_remember) {
+            apps_file << "  [IsLight]\t{" << ((a.islight)?"yes":"no") << "}" << endl;
+        }
         if (a.jumpworkspace_remember) {
             apps_file << "  [Jump]\t{" << ((a.jumpworkspace)?"yes":"no") << "}" << endl;
         }
@@ -1149,6 +1163,9 @@ bool Remember::isRemembered(WinClient &winclient, Attribute attrib) {
         break;
     case REM_FULLSCREENSTATE:
         return app->fullscreenstate_remember;
+        break;
+    case REM_ISLIGHT:
+        return app->islight_remember;
         break;
     case REM_DECOSTATE:
         return app->decostate_remember;
@@ -1233,6 +1250,9 @@ void Remember::rememberAttrib(WinClient &winclient, Attribute attrib) {
     case REM_FULLSCREENSTATE:
         app->rememberFullscreenstate(win->isFullscreen());
         break;
+    case REM_ISLIGHT:
+        app->rememberIsLight(winclient.isLight());
+        break;
     case REM_ALPHA:
         app->rememberAlpha(win->frame().getAlpha(true), win->frame().getAlpha(false));
         break;
@@ -1298,6 +1318,9 @@ void Remember::forgetAttrib(WinClient &winclient, Attribute attrib) {
         break;
     case REM_FULLSCREENSTATE:
         app->forgetFullscreenstate();
+        break;
+    case REM_ISLIGHT:
+        app->forgetIsLight();
         break;
     case REM_DECOSTATE:
         app->forgetDecostate();
@@ -1433,6 +1456,9 @@ void Remember::setupFrame(FluxboxWindow &win) {
     // I can't really test the "no" case of this
     if (app->fullscreenstate_remember)
         win.setFullscreen(app->fullscreenstate);
+
+    if (app->islight_remember)
+        winclient.isLight(app->islight);
 }
 
 void Remember::setupClient(WinClient &winclient) {

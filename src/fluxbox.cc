@@ -79,6 +79,7 @@
 #if defined(HAVE_RANDR) || defined(HAVE_RANDR1_2)
 #include <X11/extensions/Xrandr.h>
 #endif // HAVE_RANDR
+#include <X11/extensions/Xdamage.h>
 
 // system headers
 
@@ -525,6 +526,9 @@ void Fluxbox::eventLoop() {
 
     Display *disp = display();
 
+    int damage_event, damage_error;
+    XDamageQueryExtension(disp, &damage_event, &damage_error);
+
     while (!m_state.shutdown) {
 
         if (XPending(disp)) {
@@ -539,7 +543,11 @@ void Fluxbox::eventLoop() {
                     fbdbg<<"Fluxbox::eventLoop(): removing bad window from event queue"<<endl;
             } else {
                 last_bad_window = None;
-                handleEvent(&e);
+
+                if (e.type == XDamageNotify || e.type == damage_event + XDamageNotify)
+                    handleDamage((XDamageNotifyEvent*)&e);
+                else
+                    handleEvent(&e);
             }
         } else {
             FbTk::Timer::updateTimers(ConnectionNumber(disp));
@@ -568,6 +576,49 @@ void Fluxbox::ungrab() {
 
     if (m_server_grabs < 0)
         m_server_grabs = 0;
+}
+
+void Fluxbox::handleDamage(XDamageNotifyEvent * const dev) {
+    WinClient *winclient = searchWindow(dev->drawable);
+
+    if (winclient == 0 || winclient->isLightSet() || !winclient->fbwindow()->hasTitlebar())
+        return;
+
+    //std::cerr<<"Damage window: "<<winclient->window()<<endl;
+
+    XImage *image;
+    image = XGetImage(
+                    display(), dev->drawable,
+                    3, 3,
+                    1, 1, AllPlanes, ZPixmap);
+
+   if (image == NULL)
+        return;
+
+    XColor c;
+    c.pixel = XGetPixel(image, 0, 0);
+
+    XFree(image);
+    XQueryColor(display(), XDefaultColormap(display(), XDefaultScreen(display())), &c);
+
+    if ((c.red > 0 && c.red < 65536) ||
+        (c.green > 0 && c.green < 65536) ||
+        (c.blue > 0 && c.blue < 65536))
+    {
+        if (c.red > 51200 && c.green > 51200 && c.blue > 51200) {
+            winclient->isLight(true);
+            winclient->fbwindow()->frame().reconfigure();
+            //applyDecorations();
+        } else {
+            winclient->isLight(false);
+            winclient->fbwindow()->frame().reconfigure();
+            //applyDecorations();
+        }
+
+        //std::cerr<<"Colors: "<<c.red/256<<" "<<c.green/256<<" "<<c.blue/256<<" "<<endl;
+    }
+
+    //std::cerr<<"Damage event: "<<dev->type<<endl;
 }
 
 void Fluxbox::handleEvent(XEvent * const e) {

@@ -37,8 +37,10 @@ public:
     bool fallback(FbTk::ThemeItem_base &item);
 
     FbTk::TextTheme &text()  { return m_text; }
+    FbTk::TextTheme &lightText()  { return m_light_text; }
     const FbTk::BorderTheme &border() const { return m_border; }
     const FbTk::Texture &texture() const { return *m_texture; }
+    const FbTk::Texture &lightTexture() const { return *m_light_texture; }
     const FbTk::Texture &emptyTexture() const { return *m_empty_texture; }
 
     virtual FbTk::Signal<> &reconfigSig() { return FbTk::Theme::reconfigSig(); }
@@ -47,9 +49,9 @@ public:
     virtual const IconbarTheme &operator *() const { return *this; }
 
 private:
-    FbTk::ThemeItem<FbTk::Texture> m_texture, m_empty_texture;
+    FbTk::ThemeItem<FbTk::Texture> m_texture, m_light_texture, m_empty_texture;
     FbTk::BorderTheme m_border;
-    FbTk::TextTheme m_text;
+    FbTk::TextTheme m_text, m_light_text;
     std::string m_name, m_altname;
 };
 

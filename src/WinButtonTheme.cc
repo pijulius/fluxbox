@@ -31,6 +31,32 @@ WinButtonTheme::WinButtonTheme(int screen_num,
         const std::string &extra, const std::string &altextra,
         FbTk::ThemeProxy<FbWinFrameTheme> &frame_theme):
     FbTk::Theme(screen_num),
+
+    m_light_close_pm(*this, "window.close" + extra + ".light.pixmap",
+               "Window.Close" + altextra + ".Light.Pixmap"),
+    m_light_maximize_pm(*this, "window.maximize" + extra + ".light.pixmap",
+                  "Window.Maximize" + altextra + ".Light.Pixmap"),
+    m_light_iconify_pm(*this, "window.iconify" + extra + ".light.pixmap",
+                 "Window.Iconify" + altextra + ".Light.Pixmap"),
+    m_light_shade_pm(*this, "window.shade" + extra + ".light.pixmap",
+               "Window.Shade" + altextra + ".Light.Pixmap"),
+    m_light_unshade_pm(*this, "window.unshade" + extra + ".light.pixmap",
+                 "Window.Unshade" + altextra + ".Light.Pixmap"),
+    m_light_menuicon_pm(*this, "window.menuicon" + extra + ".light.pixmap",
+                  "Window.MenuIcon" + altextra + ".Light.Pixmap"),
+    m_light_title_pm(*this, "window.title" + (extra.empty() ? std::string(".focus")
+                                                      : extra) + ".light.pixmap",
+               "Window.Title" + (extra.empty() ? std::string(".Focus")
+                                               : altextra) + ".Light.Pixmap"),
+    m_light_stick_pm(*this, "window.stick" + extra + ".light.pixmap",
+               "Window.Stick" + altextra + ".Light.Pixmap"),
+    m_light_stuck_pm(*this, "window.stuck" + extra + ".light.pixmap",
+               "Window.Stuck" + altextra + ".Light.Pixmap"),
+    m_light_lefthalf_pm(*this, "window.lhalf" + extra + ".light.pixmap",
+               "Window.LHalf" + altextra + ".Light.Pixmap"),
+    m_light_righthalf_pm(*this, "window.rhalf" + extra + ".light.pixmap",
+               "Window.RHalf" + altextra + ".Light.Pixmap"),
+
     m_close_pm(*this, "window.close" + extra + ".pixmap",
                "Window.Close" + altextra + ".Pixmap"),
     m_maximize_pm(*this, "window.maximize" + extra + ".pixmap",
@@ -77,6 +103,18 @@ void WinButtonTheme::reconfigTheme() {
     } // else  use specified height to scale pixmaps
 
     // scale all pixmaps
+    m_light_close_pm->scale(size, size);
+    m_light_maximize_pm->scale(size, size);
+    m_light_menuicon_pm->scale(size, size);
+    m_light_iconify_pm->scale(size, size);
+    m_light_shade_pm->scale(size, size);
+    m_light_unshade_pm->scale(size, size);
+    m_light_title_pm->scale(size, size);
+    m_light_stick_pm->scale(size, size);
+    m_light_stuck_pm->scale(size, size);
+    m_light_lefthalf_pm->scale(size, size);
+    m_light_righthalf_pm->scale(size, size);
+
     m_close_pm->scale(size, size);
     m_maximize_pm->scale(size, size);
     m_menuicon_pm->scale(size, size);

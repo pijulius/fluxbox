@@ -39,6 +39,7 @@ public:
     Focusable(BScreen &scr, FluxboxWindow *fbwin = 0):
         m_screen(scr), m_fbwin(fbwin),
         m_instance_name("fluxbox"), m_class_name("fluxbox"),
+        m_light(false), m_light_set(false),
         m_focused(false), m_attention_state(false),
         m_attentionsig(),
         m_focussig(),
@@ -51,6 +52,10 @@ public:
      * @return true if the focuable took focus
      */
     virtual bool focus() { return false; }
+
+    virtual bool isLight() const { return m_light; }
+    virtual void isLight(bool light) { m_light = light; m_light_set = true; }
+    virtual bool isLightSet() const { return m_light_set; }
 
     /// @return true if the focusable has input focus
     virtual bool isFocused() const { return m_focused; }
@@ -130,6 +135,7 @@ protected:
     FbTk::FbString m_instance_name;
     FbTk::FbString m_class_name;
 
+    bool m_light, m_light_set;
     bool m_focused; //< whether or not it has focus
     bool m_attention_state; //< state of icon button while demanding attention
     FbTk::PixmapWithMask m_icon; //< icon pixmap with mask
