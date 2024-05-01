@@ -55,6 +55,7 @@
 
 #include <X11/Xutil.h>
 #include <X11/keysym.h>
+#include <X11/Xatom.h>
 
 #ifdef HAVE_CSTRING
   #include <cstring>
@@ -218,6 +219,12 @@ Toolbar::Toolbar(BScreen &scrn, FbTk::Layer &layer, size_t width):
     _FB_USES_NLS;
 
     frame.window.setWindowRole("fluxbox-toolbar");
+
+    Display *dpy = Fluxbox::instance()->display();
+    Atom type_atom = XInternAtom(dpy, "_NET_WM_WINDOW_TYPE", 0);
+    Atom toolbar_atom = XInternAtom(dpy, "_NET_WM_WINDOW_TYPE_TOOLBAR", 0);
+    XChangeProperty(dpy, window().window(), type_atom, XA_ATOM, 32, PropModeReplace,
+        (unsigned char *)&toolbar_atom, 1);
 
     // get this on antialias change
     m_signal_tracker.join(screen().reconfigureSig(),
