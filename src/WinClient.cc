@@ -38,6 +38,7 @@
 #include <iterator>
 #include <memory>
 #include <X11/Xatom.h>
+#include <signal.h>
 
 #ifdef HAVE_CASSERT
   #include <cassert>
@@ -209,9 +210,33 @@ bool WinClient::sendFocus() {
 }
 
 void WinClient::sendClose(bool forceful) {
-    if (forceful || !send_close_message)
+    if (forceful || !send_close_message) {
+        Atom pidAtom = XInternAtom(display(), "_NET_WM_PID", False);
+
+        if (pidAtom != None) {
+            Atom actual_type;
+            int actual_format;
+            unsigned long nitems, bytes_after;
+            unsigned char *prop;
+
+            XGetWindowProperty(display(), window(),
+                            pidAtom, 0, 255, False, AnyPropertyType, 
+                            &actual_type, &actual_format, &nitems, &bytes_after, &prop);
+
+            if (prop != NULL && prop[0] != '\0') {
+                unsigned long long_prop = prop[0] + (prop[1]<<8) + (prop[2]<<16) + (prop[3]<<24);
+
+                if (long_prop > 0) {
+                    fbdbg<<"WinClient::"<<__FUNCTION__<<": this = "<<this<<
+                        " killpid = "<<long_prop<<
+                        " window = 0x"<<hex<<window()<<dec<<endl;
+                    kill(long_prop, SIGKILL);
+                }
+            }
+        }
+
         XKillClient(display(), window());
-    else {
+    } else {
         // send WM_DELETE message
         sendMessage(*this, FbAtoms::instance()->getWMDeleteAtom(), CurrentTime);
     }
