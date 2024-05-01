@@ -39,7 +39,7 @@ void MenuSeparator::draw(FbDrawable &drawable,
 // its a separator, it shouldn't be highlighted! or shown as disabled
 //            (highlight ? theme->hiliteTextGC() :
 //             (isEnabled() ? theme->frameTextGC() : theme->disableTextGC() ) );
-            theme->frameTextGC();
+            theme->hiliteUnderlineGC();
 
         drawable.drawRectangle(tgc.gc(),
                                x + theme->bevelWidth() + height + 1, y + height / 2,
