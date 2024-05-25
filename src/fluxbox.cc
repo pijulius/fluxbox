@@ -592,7 +592,7 @@ void Fluxbox::handleDamage(XDamageNotifyEvent * const dev) {
                     3, 3,
                     1, 1, AllPlanes, ZPixmap);
 
-   if (image == NULL)
+   if (!image)
         return;
 
     XColor c;
@@ -607,12 +607,12 @@ void Fluxbox::handleDamage(XDamageNotifyEvent * const dev) {
     {
         if (c.red > 51200 && c.green > 51200 && c.blue > 51200) {
             winclient->isLight(true);
-            winclient->fbwindow()->frame().reconfigure();
-            //applyDecorations();
+            winclient->fbwindow()->frame().isLight(winclient->isLight());
+            winclient->fbwindow()->frame().applyDecorations();
         } else {
             winclient->isLight(false);
-            winclient->fbwindow()->frame().reconfigure();
-            //applyDecorations();
+            winclient->fbwindow()->frame().isLight(winclient->isLight());
+            winclient->fbwindow()->frame().applyDecorations();
         }
 
         //std::cerr<<"Colors: "<<c.red/256<<" "<<c.green/256<<" "<<c.blue/256<<" "<<endl;

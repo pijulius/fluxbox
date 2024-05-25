@@ -69,6 +69,7 @@ public:
 
     FbTk::Shape::ShapePlace shapePlace() const { return *m_shape_place; }
     const FbTk::BorderTheme &border() const { return m_border; }
+    const FbTk::BorderTheme &lightBorder() const { return m_light_border; }
 
     unsigned int titleHeight() const { return *m_title_height; }
     unsigned int bevelWidth() const { return *m_bevel_width; }
@@ -93,7 +94,7 @@ private:
     FbTk::ThemeItem<FbTk::Shape::ShapePlace> m_shape_place;
 
     FbTk::ThemeItem<int> m_title_height, m_bevel_width, m_handle_width;
-    FbTk::BorderTheme m_border;
+    FbTk::BorderTheme m_border, m_light_border;
 
     FbTk::GContext m_button_pic_gc;
 

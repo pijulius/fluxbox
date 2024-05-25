@@ -1063,6 +1063,11 @@ bool FluxboxWindow::setCurrentClient(WinClient &client, bool setinput) {
         titleSig().emit(title().logical(), *this);
         frame().setFocusTitle(title());
         frame().setShapingClient(&client, false);
+
+        if (client.isLight() != frame().isLight()) {
+            frame().isLight(client.isLight());
+            frame().applyDecorations();
+        }
     }
     return ret;
 }

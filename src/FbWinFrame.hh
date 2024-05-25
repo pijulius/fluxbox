@@ -234,6 +234,8 @@ public:
     int getContext(Window win, int x=0, int y=0, int last_x=0, int last_y=0, bool doBorders=false);
 
     //@}
+    bool isLight() { return m_light; }
+    void isLight(bool light) { m_light = light; }
 
 private:
     void redrawTitlebar();
@@ -354,6 +356,7 @@ private:
     int m_alpha[2]; // 0-unfocused, 1-focused
 
     FbTk::Shape m_shape;
+    bool m_light;
 };
 
 #endif // FBWINFRAME_HH

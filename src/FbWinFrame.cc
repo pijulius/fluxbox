@@ -147,6 +147,7 @@ FbWinFrame::FbWinFrame(BScreen &screen, unsigned int client_depth,
     m_active_orig_client_bw(0),
     m_need_render(true),
     m_button_size(1),
+    m_light(false),
     m_shape(m_window, theme->shapePlace()) {
 
     init();
@@ -1086,6 +1087,25 @@ void FbWinFrame::renderTitlebar() {
     TP& ft = theme().focusedTheme();
     TP& uft = theme().unfocusedTheme();
 
+    if (m_light) {
+        // render pixmaps
+        render(m_title_face.color[FOCUS], m_title_face.pm[FOCUS], m_titlebar.width(), m_titlebar.height(),
+               ft->titleTexture(), m_imagectrl);
+
+        render(m_title_face.color[UNFOCUS], m_title_face.pm[UNFOCUS], m_titlebar.width(), m_titlebar.height(),
+               uft->titleTexture(), m_imagectrl);
+
+        //!! TODO: don't render label if internal tabs
+
+        render(m_label_face.color[FOCUS], m_label_face.pm[FOCUS], m_label.width(), m_label.height(),
+               ft->iconbarTheme()->lightTexture(), m_imagectrl);
+
+        render(m_label_face.color[UNFOCUS], m_label_face.pm[UNFOCUS], m_label.width(), m_label.height(),
+               uft->iconbarTheme()->lightTexture(), m_imagectrl);
+
+        return;
+    }
+
     // render pixmaps
     render(m_title_face.color[FOCUS], m_title_face.pm[FOCUS], m_titlebar.width(), m_titlebar.height(),
            ft->titleTexture(), m_imagectrl);
@@ -1138,7 +1158,11 @@ void FbWinFrame::applyTitlebar() {
     m_label.setAlpha(alpha);
 
     if (m_tabmode != INTERNAL) {
-        m_label.setGC(theme()->iconbarTheme()->text().textGC());
+        if (m_light)
+            m_label.setGC(theme()->iconbarTheme()->lightText().textGC());
+        else
+            m_label.setGC(theme()->iconbarTheme()->text().textGC());
+
         m_label.setJustify(theme()->iconbarTheme()->text().justify());
 
         bg_pm_or_color(m_label, m_label_face.pm[f], m_label_face.color[f]);
@@ -1383,8 +1407,8 @@ bool FbWinFrame::setBorderWidth(bool do_move) {
     unsigned int win_bw = m_state.useBorder() ? border_width : 0;
 
     if (border_width &&
-        theme()->border().color().pixel() != window().borderColor()) {
-        FbTk::Color c = theme()->border().color();
+        m_light?theme()->lightBorder().color().pixel():theme()->border().color().pixel() != window().borderColor()) {
+        FbTk::Color c = m_light?theme()->lightBorder().color():theme()->border().color();
         window().setBorderColor(c);
         titlebar().setBorderColor(c);
         handle().setBorderColor(c);

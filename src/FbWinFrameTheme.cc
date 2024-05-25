@@ -43,6 +43,7 @@ FbWinFrameTheme::FbWinFrameTheme(int screen_num, const std::string &extra,
     m_bevel_width(*this, "window.bevelWidth", "Window.BevelWidth"),
     m_handle_width(*this, "window.handleWidth", "Window.handleWidth"),
     m_border(*this, "window" + extra, "Window" + altextra),
+    m_light_border(*this, "window" + extra + ".light", "Window" + altextra + ".Light"),
     m_button_pic_gc(RootWindow(FbTk::App::instance()->display(), screen_num)),
     m_alpha(255),
     m_iconbar_theme(screen_num, "window.label" + extra,
@@ -79,6 +80,9 @@ bool FbWinFrameTheme::fallback(FbTk::ThemeItem_base &item) {
     else if (item.name() == "window.focus.borderColor" || item.name() == "window.unfocus.borderColor")
         return FbTk::ThemeManager::instance().loadItem(item, "window.borderColor", "Window.BorderColor") ||
                FbTk::ThemeManager::instance().loadItem(item, "borderColor", "BorderColor");
+    else if (item.name() == "window.focus.light.borderColor" || item.name() == "window.unfocus.light.borderColor")
+        return FbTk::ThemeManager::instance().loadItem(item, "window.light.borderColor", "Window.Light.BorderColor") ||
+               FbTk::ThemeManager::instance().loadItem(item, "light.borderColor", "Light.BorderColor");
     else if (item.name() == "window.bevelWidth")
         return FbTk::ThemeManager::instance().loadItem(item, "bevelWidth", "bevelWidth");
     else if (item.name() == "window.handleWidth")
