@@ -107,6 +107,7 @@ public:
     void forgetMaximizedstate() { maximizedstate_remember = false; }
     void forgetFullscreenstate() { fullscreenstate_remember = false; }
     void forgetIsLight() { islight_remember = false; }
+    void forgetClickRaises() { clickraises_remember = false; }
 
     void rememberWorkspace(int ws)
         { workspace = ws; workspace_remember = true; }
@@ -160,6 +161,8 @@ public:
         { fullscreenstate = state; fullscreenstate_remember = true; }
     void rememberIsLight(bool light)
         { islight = light; islight_remember = true; }
+    void rememberClickRaises(bool raise)
+        { clickraises = raise; clickraises_remember = true; }
 
     bool workspace_remember;
     unsigned int workspace;
@@ -229,6 +232,9 @@ public:
     bool islight_remember;
     bool islight;
 
+    bool clickraises_remember;
+    bool clickraises;
+
     bool is_transient, is_grouped;
     FbTk::RefCount<ClientPattern> group_pattern;
 
@@ -265,6 +271,7 @@ void Application::reset() {
         maximizedstate_remember =
         fullscreenstate_remember =
         islight_remember =
+        clickraises_remember =
         save_on_close_remember = false;
 }
 
@@ -364,6 +371,7 @@ FbTk::Menu *createRememberMenu(BScreen &screen) {
         { true,  _FB_XTEXT(Remember, Alpha, "Transparency", "Remember window tranparency settings"), Remember::REM_ALPHA},
         { false, _FB_XTEXT(Remember, IsLight, "Theme Variant", "Remember Theme Variant"), Remember::REM_ISLIGHT},
         { false, _FB_XTEXT(Remember, Layer, "Layer", "Remember Layer"), Remember::REM_LAYER},
+        { false, _FB_XTEXT(Remember, ClickRaises, "Click Raises", "Remember Click Raises"), Remember::REM_CLICKRAISES},
         { false, _FB_XTEXT(Remember, SaveOnClose, "Save on close", "Save remembered attributes on close"), Remember::REM_SAVEONCLOSE}
     };
     bool needs_alpha = (FbTk::Transparent::haveComposite() || FbTk::Transparent::haveRender());
@@ -615,6 +623,8 @@ int parseApp(ifstream &file, Application &app, string *first_line = 0) {
             app.rememberFullscreenstate(str_label == "yes");
         } else if (str_key == "islight") {
             app.rememberIsLight(str_label == "yes");
+        } else if (str_key == "clickraises") {
+            app.rememberClickRaises(str_label == "yes");
         } else if (str_key == "jump") {
             app.rememberJumpworkspace(str_label == "yes");
         } else if (str_key == "close") {
@@ -1117,6 +1127,9 @@ void Remember::save() {
         if (a.islight_remember) {
             apps_file << "  [IsLight]\t{" << ((a.islight)?"yes":"no") << "}" << endl;
         }
+        if (a.clickraises_remember) {
+            apps_file << "  [ClickRaises]\t{" << ((a.clickraises)?"yes":"no") << "}" << endl;
+        }
         if (a.jumpworkspace_remember) {
             apps_file << "  [Jump]\t{" << ((a.jumpworkspace)?"yes":"no") << "}" << endl;
         }
@@ -1181,6 +1194,9 @@ bool Remember::isRemembered(WinClient &winclient, Attribute attrib) {
         break;
     case REM_ISLIGHT:
         return app->islight_remember;
+        break;
+    case REM_CLICKRAISES:
+        return app->clickraises_remember;
         break;
     case REM_DECOSTATE:
         return app->decostate_remember;
@@ -1278,6 +1294,10 @@ void Remember::rememberAttrib(WinClient &winclient, Attribute attrib) {
     case REM_ISLIGHT:
         app->rememberIsLight(winclient.isLight());
         break;
+    case REM_CLICKRAISES:
+        win->setClickRaises(!win->screen().clickRaises());
+        app->rememberClickRaises(win->clickRaises());
+        break;
     case REM_ALPHA:
         app->rememberAlpha(win->frame().getAlpha(true), win->frame().getAlpha(false));
         break;
@@ -1349,6 +1369,10 @@ void Remember::forgetAttrib(WinClient &winclient, Attribute attrib) {
         break;
     case REM_ISLIGHT:
         app->forgetIsLight();
+        break;
+    case REM_CLICKRAISES:
+        win->resetClickRaises();
+        app->forgetClickRaises();
         break;
     case REM_DECOSTATE:
         app->forgetDecostate();
@@ -1499,6 +1523,9 @@ void Remember::setupFrame(FluxboxWindow &win) {
 
     if (app->islight_remember)
         winclient.isLight(app->islight);
+
+    if (app->clickraises_remember)
+        win.setClickRaises(app->clickraises);
 }
 
 void Remember::setupClient(WinClient &winclient) {

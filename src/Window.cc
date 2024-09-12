@@ -295,6 +295,8 @@ FluxboxWindow::FluxboxWindow(WinClient &client):
     m_focus_protection(Focus::NoProtection),
     m_mouse_focus(BoolAcc(screen().focusControl(), &FocusControl::isMouseFocus)),
     m_click_focus(true),
+    m_click_raises(false),
+    m_click_raises_set(false),
     m_last_button_x(0),  m_last_button_y(0),
     m_button_theme(*this, screen().focusedWinButtonTheme(),
                    screen().unfocusedWinButtonTheme()),
@@ -1752,6 +1754,10 @@ void FluxboxWindow::raise() {
 
 }
 
+bool FluxboxWindow::clickRaises() const {
+    return m_click_raises_set ? m_click_raises : screen().clickRaises();
+}
+
 void FluxboxWindow::lower() {
     if (isIconic())
         return;
@@ -2465,7 +2471,7 @@ void FluxboxWindow::buttonPressEvent(XButtonEvent &be) {
     // - hide open menues
     // - focus on clickFocus
     if (frame().window().window() == be.window) {
-        if (screen().clickRaises())
+        if (clickRaises())
             raise();
 
         m_button_grab_x = be.x_root - frame().x() - frame().window().borderWidth();

@@ -279,6 +279,11 @@ public:
     void setMouseFocus(bool value) { m_mouse_focus = value; }
     /// sets whether or not the window gets focused with click
     void setClickFocus(bool value) { m_click_focus = value; }
+
+    void setClickRaises(bool value) { m_click_raises = value; m_click_raises_set = true; }
+    void resetClickRaises() { m_click_raises = false; m_click_raises_set = false; }
+    bool clickRaises() const;
+
     void reconfigure();
 
 
@@ -603,6 +608,8 @@ private:
     /// if the window is focused with EnterNotify
     FbTk::DefaultValue<bool, BoolAcc> m_mouse_focus;
     bool m_click_focus;  ///< if the window is focused by clicking
+    bool m_click_raises;
+    bool m_click_raises_set;
     int m_last_button_x, ///< last known x position of the mouse button
         m_last_button_y; ///< last known y position of the mouse button
 
