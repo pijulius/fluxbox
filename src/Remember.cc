@@ -197,6 +197,7 @@ public:
     FbWinFrame::TabPlacement tabplacement;
 
     bool decostate_remember;
+    unsigned int decostate_operator;
     unsigned int decostate;
 
     bool stuckstate_remember;
@@ -252,6 +253,7 @@ Application::Application(bool transient, bool grouped, ClientPattern *pat):
 }
 
 void Application::reset() {
+    decostate_operator = 0;
     decostate_remember =
         dimensions_remember =
         focushiddenstate_remember =
@@ -560,6 +562,12 @@ int parseApp(ifstream &file, Application &app, string *first_line = 0) {
             app.rememberIconHiddenstate(str_label == "yes");
             app.rememberFocusHiddenstate(str_label == "yes");
         } else if (str_key == "deco") {
+            app.decostate_operator = 0;
+            if (str_label.at(0) == '&') app.decostate_operator = 1;
+            if (str_label.at(0) == '|') app.decostate_operator = 2;
+            if (str_label.at(0) == '^') app.decostate_operator = 3;
+            if (app.decostate_operator) str_label = str_label.substr(1, str_label.size());
+
             int deco = WindowState::getDecoMaskFromString(str_label);
             if (deco == -1)
                 had_error = 1;
@@ -1423,8 +1431,18 @@ void Remember::setupFrame(FluxboxWindow &win) {
         win.setIconHidden(app->iconhiddenstate);
     if (app->layer_remember)
         win.moveToLayer(app->layer);
-    if (app->decostate_remember)
-        win.setDecorationMask(app->decostate);
+    if (app->decostate_remember) {
+        if (app->decostate_operator) {
+            if (app->decostate_operator == 1)
+                win.setDecorationMask(win.decorationMask() & app->decostate);
+            else if (app->decostate_operator == 2)
+                win.setDecorationMask(win.decorationMask() | app->decostate);
+            else if (app->decostate_operator == 3)
+                win.setDecorationMask(win.decorationMask() ^ app->decostate);
+        } else {
+            win.setDecorationMask(app->decostate);
+        }
+    }
 
     if (app->alpha_remember) {
         win.frame().setDefaultAlpha();
