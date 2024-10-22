@@ -1044,28 +1044,35 @@ void Remember::save() {
                       << FbWinFrame::nameOfTabPlacement(a.tabplacement) << "}" << endl;
         }
         if (a.decostate_remember) {
+            char deco_operator[2] = "";
+            if (a.decostate_operator == 1)
+                strcpy(deco_operator, "&");
+            else if (a.decostate_operator == 2)
+                strcpy(deco_operator, "|");
+            else if (a.decostate_operator == 3)
+                strcpy(deco_operator, "^");
             switch (a.decostate) {
             case (0) :
                 apps_file << "  [Deco]\t{NONE}" << endl;
                 break;
             case (0xffffffff):
             case (WindowState::DECOR_NORMAL):
-                apps_file << "  [Deco]\t{NORMAL}" << endl;
+                apps_file << "  [Deco]\t{"<<deco_operator<<"NORMAL}" << endl;
                 break;
             case (WindowState::DECOR_TOOL):
-                apps_file << "  [Deco]\t{TOOL}" << endl;
+                apps_file << "  [Deco]\t{"<<deco_operator<<"TOOL}" << endl;
                 break;
             case (WindowState::DECOR_TINY):
-                apps_file << "  [Deco]\t{TINY}" << endl;
+                apps_file << "  [Deco]\t{"<<deco_operator<<"TINY}" << endl;
                 break;
             case (WindowState::DECOR_BORDER):
-                apps_file << "  [Deco]\t{BORDER}" << endl;
+                apps_file << "  [Deco]\t{"<<deco_operator<<"BORDER}" << endl;
                 break;
             case (WindowState::DECOR_TAB):
-                apps_file << "  [Deco]\t{TAB}" << endl;
+                apps_file << "  [Deco]\t{"<<deco_operator<<"TAB}" << endl;
                 break;
             default:
-                apps_file << "  [Deco]\t{0x"<<hex<<a.decostate<<dec<<"}"<<endl;
+                apps_file << "  [Deco]\t{"<<deco_operator<<"0x"<<hex<<a.decostate<<dec<<"}"<<endl;
                 break;
             }
         }
