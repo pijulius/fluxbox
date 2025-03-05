@@ -73,6 +73,8 @@ using std::list;
 
 using FbTk::STLUtil::forAll;
 
+using namespace std::placeholders;
+
 namespace {
 
 const struct { 
@@ -373,9 +375,9 @@ void Toolbar::screenChanged(BScreen &screen) {
 }
 
 void Toolbar::relayout() {
-    forAll(m_item_list, std::mem_fun(&ToolbarItem::updateSizing));
+    forAll(m_item_list, std::mem_fn(&ToolbarItem::updateSizing));
     rearrangeItems();
-    forAll(m_item_list, std::bind2nd(std::mem_fun(&ToolbarItem::renderTheme), alpha()));
+    forAll(m_item_list, std::bind(std::mem_fn(&ToolbarItem::renderTheme), _1, alpha()));
 }
 
 void Toolbar::reconfigure() {
@@ -741,7 +743,7 @@ void Toolbar::setPlacement(Toolbar::Placement where) {
         break;
     }
 
-    forAll(m_item_list, std::bind2nd(std::mem_fun(&ToolbarItem::setOrientation), orient));
+    forAll(m_item_list, std::bind(std::mem_fn(&ToolbarItem::setOrientation), _1, orient));
 }
 
 void Toolbar::updateVisibleState() {
@@ -756,7 +758,7 @@ void Toolbar::toggleHidden() {
         frame.window.move(frame.x_hidden, frame.y_hidden);
     else {
         frame.window.move(frame.x, frame.y);
-        forAll(m_item_list, std::mem_fun(&ToolbarItem::parentMoved));
+        forAll(m_item_list, std::mem_fn(&ToolbarItem::parentMoved));
     }
 
 }

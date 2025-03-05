@@ -45,7 +45,7 @@
 #include <cstring>
 
 using std::max;
-using std::mem_fun;
+using std::mem_fn;
 using std::string;
 
 using FbTk::STLUtil::forAll;
@@ -464,7 +464,7 @@ void FbWinFrame::notifyMoved(bool clear) {
 
     if ((m_tabmode == EXTERNAL && m_use_tabs) || m_use_titlebar) {
         m_tab_container.parentMoved();
-        m_tab_container.for_each(mem_fun(&FbTk::Button::parentMoved));
+        m_tab_container.for_each(mem_fn(&FbTk::Button::parentMoved));
     }
 
     if (m_use_titlebar) {
@@ -473,8 +473,8 @@ void FbWinFrame::notifyMoved(bool clear) {
 
         m_titlebar.parentMoved();
 
-        forAll(m_buttons_left, mem_fun(&FbTk::Button::parentMoved));
-        forAll(m_buttons_right, mem_fun(&FbTk::Button::parentMoved));
+        forAll(m_buttons_left, mem_fn(&FbTk::Button::parentMoved));
+        forAll(m_buttons_right, mem_fn(&FbTk::Button::parentMoved));
     }
 
     if (m_use_handle) {
@@ -493,8 +493,8 @@ void FbWinFrame::clearAll() {
 
     if  (m_use_titlebar) {
         redrawTitlebar();
-        forAll(m_buttons_left, mem_fun(&FbTk::Button::clear));
-        forAll(m_buttons_right, mem_fun(&FbTk::Button::clear));
+        forAll(m_buttons_left, mem_fn(&FbTk::Button::clear));
+        forAll(m_buttons_right, mem_fn(&FbTk::Button::clear));
     } else if (m_tabmode == EXTERNAL && m_use_tabs)
         m_tab_container.clear();
 
