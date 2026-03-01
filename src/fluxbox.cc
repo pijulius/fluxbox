@@ -851,7 +851,12 @@ void Fluxbox::handleEvent(XEvent * const e) {
     default: {
 
 #if defined(HAVE_RANDR) || defined(HAVE_RANDR1_2)
-        if (e->type == s_randr_event_type) {
+        bool is_randr_event = (e->type == s_randr_event_type);
+#ifdef RRNotify
+        is_randr_event = is_randr_event ||
+                         (e->type == s_randr_event_type + RRNotify);
+#endif
+        if (is_randr_event) {
 #ifdef HAVE_RANDR1_2
             XRRUpdateConfiguration(e);
 #endif
