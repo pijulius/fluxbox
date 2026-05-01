@@ -97,7 +97,7 @@ WinClient::WinClient(Window win, BScreen &screen, FluxboxWindow *fbwin):
                      m_icon_override(false),
                      m_window_type(WindowState::TYPE_NORMAL),
                      m_mwm_hint(0),
-                     m_damage(XDamageCreate(display(), window(), XDamageReportNonEmpty)),
+                     m_damage(XDamageCreate(display(), window(), XDamageReportRawRectangles)),
                      m_strut(0) {
 
     old_bw = borderWidth();
@@ -136,7 +136,7 @@ WinClient::WinClient(Window win, BScreen &screen, FluxboxWindow *fbwin):
 WinClient::~WinClient() {
     fbdbg<<__FILE__<<"(~"<<__FUNCTION__<<")[this="<<this<<"]"<<endl;
 
-    if (m_damage != NULL)
+    if (m_damage)
         XDamageDestroy(display(), m_damage);
 
     FbTk::EventManager::instance()->remove(window());
@@ -553,6 +553,45 @@ bool WinClient::validateClient() const {
     }
 
     return true;
+}
+
+void WinClient::refreshIsLight() {
+    if (isLightSet() || !fbwindow()->hasTitlebar())
+        return;
+
+    XImage *image;
+    image = XGetImage(
+                    display(), window(),
+                    3, 3,
+                    1, 1, AllPlanes, ZPixmap);
+
+   if (!image)
+        return;
+
+    XColor c;
+    c.pixel = XGetPixel(image, 0, 0);
+
+    XFree(image);
+    XQueryColor(display(), XDefaultColormap(display(), XDefaultScreen(display())), &c);
+
+    if ((c.red > 0 && c.red < 65536) ||
+        (c.green > 0 && c.green < 65536) ||
+        (c.blue > 0 && c.blue < 65536))
+    {
+        bool newLight = false;
+
+        if (c.red > 51200 && c.green > 51200 && c.blue > 51200)
+            newLight = true;
+        else
+            newLight = false;
+
+        if (newLight != isLight()) {
+            isLight(newLight);
+            fbwindow()->frame().isLight(newLight);
+            fbwindow()->frame().applyDecorations();
+        }
+        //std::cerr<<"Colors: "<<c.red/256<<" "<<c.green/256<<" "<<c.blue/256<<" "<<endl;
+    }
 }
 
 void WinClient::setStrut(Strut *strut) {

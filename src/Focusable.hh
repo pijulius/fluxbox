@@ -54,7 +54,8 @@ public:
     virtual bool focus() { return false; }
 
     virtual bool isLight() const { return m_light; }
-    virtual void isLight(bool light) { m_light = light; m_light_set = true; }
+    virtual void isLight(bool light) { m_light = light; }
+    virtual void isLight(bool light, bool rem) { m_light = light; m_light_set = rem; }
     virtual bool isLightSet() const { return m_light_set; }
 
     /// @return true if the focusable has input focus

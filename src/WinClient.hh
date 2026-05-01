@@ -74,6 +74,7 @@ public:
     void updateWMHints();
     void updateWMNormalHints();
 
+    void refreshIsLight();
     void setStrut(Strut *strut);
     void clearStrut();
 

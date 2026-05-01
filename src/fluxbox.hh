@@ -193,7 +193,7 @@ private:
     std::string getRcFilename();
     void load_rc();
     void real_reconfigure();
-    void handleDamage(XDamageNotifyEvent *xe);
+    void handleDamage(WinClient *wc);
     void handleEvent(XEvent *xe);
     void handleUnmapNotify(XUnmapEvent &ue);
     void handleClientMessage(XClientMessageEvent &ce);
