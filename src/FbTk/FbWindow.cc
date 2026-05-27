@@ -676,8 +676,8 @@ void FbWindow::create(Window parent, int x, int y,
     if (cmap != CopyFromParent) {
         valmask |= CWColormap | CWBackPixel | CWBorderPixel;
         values.colormap = cmap;
-        values.background_pixel = XWhitePixel(display(), 0);
-        values.border_pixel = XBlackPixel(display(), 0);
+        values.background_pixel = 0x00000000;
+        values.border_pixel = 0;
     }
 
     m_window = XCreateWindow(display(), parent, x, y, width, height,
