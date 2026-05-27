@@ -73,7 +73,7 @@ public:
 
     unsigned int titleHeight() const { return *m_title_height; }
     unsigned int bevelWidth() const { return *m_bevel_width; }
-    unsigned int handleWidth() const { return *m_handle_width; }
+    unsigned int handleHeight() const { return *m_handle_height; }
 
     int alpha() const { return m_alpha; }
     void setAlpha(int alpha) { m_alpha = alpha; }
@@ -93,7 +93,7 @@ private:
     FbTk::ThemeItem<FbTk::Font> m_font;
     FbTk::ThemeItem<FbTk::Shape::ShapePlace> m_shape_place;
 
-    FbTk::ThemeItem<int> m_title_height, m_bevel_width, m_handle_width;
+    FbTk::ThemeItem<int> m_title_height, m_bevel_width, m_handle_height;
     FbTk::BorderTheme m_border, m_light_border;
 
     FbTk::GContext m_button_pic_gc;

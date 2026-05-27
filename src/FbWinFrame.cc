@@ -800,7 +800,7 @@ bool FbWinFrame::hideHandle() {
 }
 
 bool FbWinFrame::showHandle() {
-    if (m_use_handle || theme()->handleWidth() == 0)
+    if (m_use_handle || theme()->handleHeight() == 0)
         return false;
 
     m_use_handle = true;
@@ -911,12 +911,12 @@ void FbWinFrame::reconfigure() {
     m_bevel = theme()->bevelWidth();
 
     unsigned int orig_handle_h = handle().height();
-    if (m_use_handle && orig_handle_h != theme()->handleWidth())
+    if (m_use_handle && orig_handle_h != theme()->handleHeight())
         m_window.resize(m_window.width(), m_window.height() -
-                        orig_handle_h + theme()->handleWidth());
+                        orig_handle_h + theme()->handleHeight());
 
-    handle().resize(handle().width(), theme()->handleWidth());
-    gripLeft().resize(buttonHeight(), theme()->handleWidth());
+    handle().resize(handle().width(), theme()->handleHeight());
+    gripLeft().resize(buttonHeight(), theme()->handleHeight());
     gripRight().resize(gripLeft().width(), gripLeft().height());
 
     // align titlebar and render it
@@ -1306,7 +1306,7 @@ void FbWinFrame::applyButtons() {
 
 void FbWinFrame::init() {
 
-    if (theme()->handleWidth() == 0)
+    if (theme()->handleHeight() == 0)
         m_use_handle = false;
 
     m_alpha[UNFOCUS] = theme().unfocusedTheme()->alpha();

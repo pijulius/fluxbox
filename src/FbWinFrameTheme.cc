@@ -41,7 +41,7 @@ FbWinFrameTheme::FbWinFrameTheme(int screen_num, const std::string &extra,
     m_shape_place(*this, "window.roundCorners", "Window.RoundCorners"),
     m_title_height(*this, "window.title.height", "Window.Title.Height"),
     m_bevel_width(*this, "window.bevelWidth", "Window.BevelWidth"),
-    m_handle_width(*this, "window.handleWidth", "Window.handleWidth"),
+    m_handle_height(*this, "window.handleWidth", "Window.handleWidth"),
     m_border(*this, "window" + extra, "Window" + altextra),
     m_light_border(*this, "window" + extra + ".light", "Window" + altextra + ".Light"),
     m_button_pic_gc(RootWindow(FbTk::App::instance()->display(), screen_num)),
@@ -93,9 +93,9 @@ bool FbWinFrameTheme::fallback(FbTk::ThemeItem_base &item) {
 
 void FbWinFrameTheme::reconfigTheme() {
     *m_bevel_width = FbTk::Util::clamp(*m_bevel_width, 0, 20);
-    if (*m_handle_width < 0)
-        *m_handle_width = 1;
-    *m_handle_width = FbTk::Util::clamp(*m_handle_width, 0, 200);
+    if (*m_handle_height < 0)
+        *m_handle_height = 1;
+    *m_handle_height = FbTk::Util::clamp(*m_handle_height, 0, 200);
     m_button_pic_gc.setForeground(*m_button_color);
     m_iconbar_theme.reconfigTheme();
 }
