@@ -40,8 +40,14 @@ FbWinFrameTheme::FbWinFrameTheme(int screen_num, const std::string &extra,
     m_font(*this, "window.font", "Window.Font"),
     m_shape_place(*this, "window.roundCorners", "Window.RoundCorners"),
     m_title_height(*this, "window.title.height", "Window.Title.Height"),
+    m_title_offset_y(*this, "window.title.offsetY", "Window.Title.OffsetY"),
+    m_title_offset_x(*this, "window.title.offsetX", "Window.Title.OffsetX"),
+    m_title_width(*this, "window.title.width", "Window.Title.Width"),
     m_bevel_width(*this, "window.bevelWidth", "Window.BevelWidth"),
     m_handle_height(*this, "window.handleWidth", "Window.handleWidth"),
+    m_handle_offset_y(*this, "window.handle.offsetY", "Window.Handle.OffsetY"),
+    m_handle_offset_x(*this, "window.handle.offsetX", "Window.Handle.OffsetX"),
+    m_handle_width(*this, "window.handle.width", "Window.Handle.Width"),
     m_border(*this, "window" + extra, "Window" + altextra),
     m_light_border(*this, "window" + extra + ".light", "Window" + altextra + ".Light"),
     m_button_pic_gc(RootWindow(FbTk::App::instance()->display(), screen_num)),
@@ -50,6 +56,13 @@ FbWinFrameTheme::FbWinFrameTheme(int screen_num, const std::string &extra,
                     "Window.Label" + altextra) {
 
     *m_title_height = 0;
+    *m_title_offset_y = 0;
+    *m_title_offset_x = 0;
+    *m_title_width = 0;
+    *m_handle_height = 0;
+    *m_handle_offset_y = 0;
+    *m_handle_offset_x = 0;
+    *m_handle_width = 0;
     m_font->load(FbTk::Font::DEFAULT_FONT);
 
     // create cursors

@@ -224,8 +224,8 @@ public:
     bool focused() const { return m_state.focused; }
     FocusableTheme<FbWinFrameTheme> &theme() const { return m_theme; }
     /// @return titlebar height
-    unsigned int titlebarHeight() const { return (m_use_titlebar?m_titlebar.height()+m_titlebar.borderWidth():0); }
-    unsigned int handleHeight() const { return (m_use_handle?m_handle.height()+m_handle.borderWidth():0); }
+    unsigned int titlebarHeight() const;
+    unsigned int handleHeight() const;
     /// @return size of button
     unsigned int buttonHeight() const;
     bool externalTabMode() const { return m_tabmode == EXTERNAL && m_use_tabs; }

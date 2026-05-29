@@ -72,8 +72,14 @@ public:
     const FbTk::BorderTheme &lightBorder() const { return m_light_border; }
 
     unsigned int titleHeight() const { return *m_title_height; }
+    int titleOffsetY() const { return *m_title_offset_y; }
+    int titleOffsetX() const { return *m_title_offset_x; }
+    int titleWidth() const { return *m_title_width; }
     unsigned int bevelWidth() const { return *m_bevel_width; }
     unsigned int handleHeight() const { return *m_handle_height; }
+    int handleOffsetY() const { return *m_handle_offset_y; }
+    int handleOffsetX() const { return *m_handle_offset_x; }
+    int handleWidth() const { return *m_handle_width; }
 
     int alpha() const { return m_alpha; }
     void setAlpha(int alpha) { m_alpha = alpha; }
@@ -93,7 +99,9 @@ private:
     FbTk::ThemeItem<FbTk::Font> m_font;
     FbTk::ThemeItem<FbTk::Shape::ShapePlace> m_shape_place;
 
-    FbTk::ThemeItem<int> m_title_height, m_bevel_width, m_handle_height;
+    FbTk::ThemeItem<int> m_title_height, m_title_offset_y, m_title_offset_x,
+                         m_title_width, m_bevel_width, m_handle_height,
+                         m_handle_offset_y, m_handle_offset_x, m_handle_width;
     FbTk::BorderTheme m_border, m_light_border;
 
     FbTk::GContext m_button_pic_gc;

@@ -160,7 +160,7 @@ FbWinFrame::FbWinFrame(BScreen &screen, unsigned int client_depth,
         (client_depth == screen.rootWindow().maxDepth() ? screen.rootWindow().visual() : CopyFromParent),
         (client_depth == screen.rootWindow().maxDepth() ? screen.rootWindow().colormap() : CopyFromParent)),
     m_layeritem(window(), *screen.layerManager().getLayer(ResourceLayer::NORMAL)),
-    m_titlebar(m_window, 0, 0, 100, 16, s_mask, false, false, 
+    m_titlebar(m_window, 0, 0, 100, 16, s_mask, false, false,
         screen.rootWindow().decorationDepth(), InputOutput,
         screen.rootWindow().decorationVisual(),
         screen.rootWindow().decorationColormap()),
@@ -747,16 +747,15 @@ bool FbWinFrame::hideTitlebar() {
     if (!m_use_titlebar)
         return false;
 
+    int h = height();
+    int th = titlebarHeight();
+
     m_titlebar.hide();
     m_use_titlebar = false;
 
-    int h = height();
-    int th = m_titlebar.height();
-    int tbw = m_titlebar.borderWidth();
-
     // only take away one borderwidth (as the other border is still the "top"
     // border)
-    h = std::max(1, h - th - tbw);
+    h = std::max(1, h - th);
     m_window.resize(m_window.width(), h);
 
     return true;
@@ -771,8 +770,7 @@ bool FbWinFrame::showTitlebar() {
 
     // only add one borderwidth (as the other border is still the "top"
     // border)
-    m_window.resize(m_window.width(), m_window.height() + m_titlebar.height() +
-                    m_titlebar.borderWidth());
+    m_window.resize(m_window.width(), m_window.height() + titlebarHeight());
 
     return true;
 
@@ -782,18 +780,17 @@ bool FbWinFrame::hideHandle() {
     if (!m_use_handle)
         return false;
 
+    int h = m_window.height();
+    int hh = handleHeight();
+
     m_handle.hide();
     m_grip_left.hide();
     m_grip_right.hide();
     m_use_handle = false;
 
-    int h = m_window.height();
-    int hh = m_handle.height();
-    int hbw = m_handle.borderWidth();
-
     // only take away one borderwidth (as the other border is still the "top"
     // border)
-    h = std::max(1, h - hh - hbw);
+    h = std::max(1, h - hh);
     m_window.resize(m_window.width(), h);
 
     return true;
@@ -812,8 +809,7 @@ bool FbWinFrame::showHandle() {
     m_handle.show();
     m_handle.showSubwindows(); // shows grips
 
-    m_window.resize(m_window.width(), m_window.height() + m_handle.height() +
-                    m_handle.borderWidth());
+    m_window.resize(m_window.width(), m_window.height() + handleHeight());
     return true;
 }
 
@@ -943,7 +939,7 @@ void FbWinFrame::reconfigure() {
         int client_height = m_window.height();
         if (m_use_titlebar) {
             // only one borderwidth as titlebar is really at -borderwidth
-            int titlebar_height = m_titlebar.height() + m_titlebar.borderWidth();
+            int titlebar_height = titlebarHeight();
             client_top += titlebar_height;
             client_height -= titlebar_height;
         }
@@ -953,17 +949,43 @@ void FbWinFrame::reconfigure() {
         const int grip_width = 20; //TODO
         const int handle_bw = static_cast<signed>(m_handle.borderWidth());
 
-        int ypos = m_window.height();
+        int handle_x = -handle_bw;
+        int handle_y = m_window.height();
+        int handle_width = m_window.width();
 
         // if the handle isn't on, it's actually below the window
         if (m_use_handle)
-            ypos -= grip_height + handle_bw;
+            handle_y -= grip_height + handle_bw;
+
+        if (theme()->handleWidth() > 0) {
+            int sethandle_width = theme()->handleWidth();
+            handle_width = std::min(sethandle_width, static_cast<int>(m_window.width()));
+        } else if (theme()->handleWidth() < 0) {
+            unsigned int content_w = m_bevel + grip_width * 3;
+            handle_width = std::min(static_cast<int>(content_w), static_cast<int>(m_window.width()));
+        }
+
+        if (theme()->handleOffsetX() > 0) {
+            handle_x = theme()->handleOffsetX();
+            handle_width = std::max(1, std::min(handle_x + handle_width,
+                                              static_cast<int>(m_window.width()) - handle_x));
+        } else if (theme()->handleOffsetX() < 0) {
+            handle_width = std::max(1, std::min(handle_width,
+                                              static_cast<int>(m_window.width()) + theme()->handleOffsetX()));
+            handle_x = m_window.width() + theme()->handleOffsetX() - handle_width;
+        } else if (handle_width < m_window.width()) {
+            handle_x = (m_window.width() - handle_width) / 2
+                       - m_handle.borderWidth();
+        }
+
+        if (theme()->handleOffsetY() < -grip_height)
+            handle_y += (theme()->handleOffsetY() + grip_height);
 
         // we do handle settings whether on or not so that if they get toggled
         // then things are ok...
         m_handle.invalidateBackground();
-        m_handle.moveResize(-handle_bw, ypos,
-                            m_window.width(), grip_height);
+        m_handle.moveResize(handle_x, handle_y,
+                            handle_width, grip_height);
 
         m_grip_left.invalidateBackground();
         m_grip_left.moveResize(-handle_bw, -handle_bw,
@@ -975,7 +997,7 @@ void FbWinFrame::reconfigure() {
 
         if (m_use_handle) {
             m_handle.raise();
-            client_height -= m_handle.height() + m_handle.borderWidth();
+            client_height -= handleHeight();
         } else {
             m_handle.lower();
         }
@@ -1018,6 +1040,24 @@ void FbWinFrame::setShapingClient(FbTk::FbWindow *win, bool always_update) {
     m_shape.setShapeSource(win, 0, titlebarHeight(), always_update);
 }
 
+unsigned int FbWinFrame::titlebarHeight() const {
+    if (!m_use_titlebar)
+        return 0;
+
+    int height = m_titlebar.height() + m_titlebar.borderWidth()
+                 + theme()->titleOffsetY();
+    return std::max(0, height);
+}
+
+unsigned int FbWinFrame::handleHeight() const {
+    if (!m_use_handle)
+        return 0;
+
+    int height = m_handle.height() + m_handle.borderWidth()
+                 + theme()->handleOffsetY();
+    return std::max(0, height);
+}
+
 unsigned int FbWinFrame::buttonHeight() const {
     return m_titlebar.height() - m_bevel*2;
 }
@@ -1055,9 +1095,46 @@ void FbWinFrame::reconfigureTitlebar() {
     // if the titlebar grows in size, make sure the whole window does too
     if (orig_height != title_height)
         m_window.resize(m_window.width(), m_window.height()-orig_height+title_height);
+
+    int titlebar_x = -m_titlebar.borderWidth();
+    int titlebar_y = -m_titlebar.borderWidth();
+    int titlebar_width = m_window.width();
+
+    if (theme()->titleWidth() > 0) {
+        int settitlebar_width = theme()->titleWidth();
+        titlebar_width = std::min(settitlebar_width, static_cast<int>(m_window.width()));
+    } else if (theme()->titleWidth() < 0) {
+        unsigned int btn_size = title_height - m_bevel * 2;
+        unsigned int content_w = m_bevel; // left padding
+        for (size_t i = 0; i < m_buttons_left.size(); ++i)
+            content_w += btn_size + m_bevel;
+        content_w += m_bevel; // gap before label
+        content_w += m_label.preferredWidth();
+        content_w += m_bevel; // gap after label
+        for (size_t i = 0; i < m_buttons_right.size(); ++i)
+            content_w += btn_size + m_bevel;
+        titlebar_width = std::min(static_cast<int>(content_w), static_cast<int>(m_window.width()));
+    }
+
+    if (theme()->titleOffsetX() > 0) {
+        titlebar_x = theme()->titleOffsetX();
+        titlebar_width = std::max(1, std::min(titlebar_x + titlebar_width,
+                                              static_cast<int>(m_window.width()) - titlebar_x));
+    } else if (theme()->titleOffsetX() < 0) {
+        titlebar_width = std::max(1, std::min(titlebar_width,
+                                              static_cast<int>(m_window.width()) + theme()->titleOffsetX()));
+        titlebar_x = m_window.width() + theme()->titleOffsetX() - titlebar_width;
+    } else if (titlebar_width < m_window.width()) {
+        titlebar_x = (m_window.width() - titlebar_width) / 2
+                     - m_titlebar.borderWidth();
+    }
+
+    if (theme()->titleOffsetY() < -title_height)
+        titlebar_y = (theme()->titleOffsetY() + title_height) * -1;
+
     m_titlebar.invalidateBackground();
-    m_titlebar.moveResize(-m_titlebar.borderWidth(), -m_titlebar.borderWidth(),
-                          m_window.width(), title_height);
+    m_titlebar.moveResize(titlebar_x, titlebar_y,
+                          titlebar_width, title_height);
 
     // draw left buttons first
     unsigned int next_x = m_bevel;
