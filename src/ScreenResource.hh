@@ -34,7 +34,7 @@ struct ScreenResource {
     FbTk::Resource<bool> opaque_move,
        opaque_resize,
        full_max,
-       max_ignore_inc, 
+       max_ignore_inc,
        max_disable_move,
        max_disable_resize,
        workspace_warping,
@@ -42,7 +42,8 @@ struct ScreenResource {
        workspace_warping_vertical,
        show_window_pos,
        auto_raise,
-       click_raises;
+       click_raises,
+       invisible_handles;
 
     FbTk::Resource<std::string> default_deco;
     FbTk::Resource<FbWinFrame::TabPlacement> tab_placement;
