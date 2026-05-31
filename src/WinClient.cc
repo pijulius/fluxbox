@@ -97,6 +97,8 @@ WinClient::WinClient(Window win, BScreen &screen, FluxboxWindow *fbwin):
                      m_icon_override(false),
                      m_window_type(WindowState::TYPE_NORMAL),
                      m_mwm_hint(0),
+                     m_probe_light_pixel_x(-1),
+                     m_probe_light_pixel_y(-1),
                      m_damage(XDamageCreate(display(), window(), XDamageReportRawRectangles)),
                      m_strut(0) {
 
@@ -220,7 +222,7 @@ void WinClient::sendClose(bool forceful) {
             unsigned char *prop;
 
             XGetWindowProperty(display(), window(),
-                            pidAtom, 0, 255, False, AnyPropertyType, 
+                            pidAtom, 0, 255, False, AnyPropertyType,
                             &actual_type, &actual_format, &nitems, &bytes_after, &prop);
 
             if (prop != NULL && prop[0] != '\0') {
@@ -559,10 +561,26 @@ void WinClient::refreshIsLight() {
     if (isLightSet() || !fbwindow()->hasTitlebar())
         return;
 
+    if (m_probe_light_pixel_x < 0 || m_probe_light_pixel_y < 0) {
+        m_probe_light_pixel_x = 0;
+        m_probe_light_pixel_y = 0;
+
+        int pixel_x = fbwindow()->frame().theme()->probeLightPixelX();
+        int pixel_y = fbwindow()->frame().theme()->probeLightPixelY();
+
+        if (pixel_x > 0 && pixel_y > 0) {
+            m_probe_light_pixel_x = pixel_x;
+            m_probe_light_pixel_y = pixel_y;
+        }
+    }
+
+    if (m_probe_light_pixel_x <= 0 || m_probe_light_pixel_y <= 0)
+        return;
+
     XImage *image;
     image = XGetImage(
                     display(), window(),
-                    3, 3,
+                    m_probe_light_pixel_x, m_probe_light_pixel_y,
                     1, 1, AllPlanes, ZPixmap);
 
    if (!image)

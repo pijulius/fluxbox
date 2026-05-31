@@ -33,7 +33,7 @@
 class BScreen;
 class Strut;
 
-/// Holds client window info 
+/// Holds client window info
 class WinClient: public Focusable, public FbTk::FbWindow {
 public:
     typedef std::list<WinClient *> TransientList;
@@ -49,7 +49,7 @@ public:
 
     ~WinClient();
 
-    bool sendFocus(); // returns whether we sent a message or not 
+    bool sendFocus(); // returns whether we sent a message or not
                       // i.e. whether we assume the focus will get taken
     bool acceptsFocus() const; // will this window accept focus (according to hints)
     void sendClose(bool forceful = false);
@@ -90,7 +90,7 @@ public:
     bool validateClient() const;
 
     //
-    // accessors 
+    // accessors
     //
 
     bool getAttrib(XWindowAttributes &attr) const;
@@ -139,7 +139,7 @@ public:
     std::list<WinClient *> transients;  // which windows are our transients?
     Window window_group;
 
- 
+
     int old_bw;
     unsigned long initial_state, normal_hint_flags, wm_hint_flags;
 
@@ -156,7 +156,7 @@ private:
     void emitTitleSig();
 
     // number of transients which we are modal for
-    int m_modal_count;
+    int m_modal_count, m_probe_light_pixel_x, m_probe_light_pixel_y;
     bool m_modal;
     bool accepts_input, send_focus_message, send_close_message;
 
@@ -168,16 +168,16 @@ private:
     SizeHints m_size_hints;
 
     Strut *m_strut;
-    // map transient_for X window to winclient transient 
-    // (used if transient_for FbWindow was created after transient)    
-    // Since a lot of transients can be created before transient_for 
+    // map transient_for X window to winclient transient
+    // (used if transient_for FbWindow was created after transient)
+    // Since a lot of transients can be created before transient_for
     // we need to map transient_for window to a list of transients
     //
     // Stuff to worry about:
     // 1) If transients die before the transient_for is created
     // 2) If transients changes to a new transient_for before old transient_for is created
-    // ( 3) Transient_for is never created 
-    //      This is not a big deal since the key value will be cleared 
+    // ( 3) Transient_for is never created
+    //      This is not a big deal since the key value will be cleared
     //      once the list is empty )
     typedef std::map<Window, TransientList> TransientWaitMap;
     static TransientWaitMap s_transient_wait;

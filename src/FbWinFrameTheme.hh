@@ -81,6 +81,9 @@ public:
     int handleOffsetX() const { return *m_handle_offset_x; }
     int handleWidth() const { return *m_handle_width; }
 
+    int probeLightPixelX() const { return *m_probe_light_pixel_x; }
+    int probeLightPixelY() const { return *m_probe_light_pixel_y; }
+
     int alpha() const { return m_alpha; }
     void setAlpha(int alpha) { m_alpha = alpha; }
 
@@ -101,7 +104,8 @@ private:
 
     FbTk::ThemeItem<int> m_title_height, m_title_offset_y, m_title_offset_x,
                          m_title_width, m_bevel_width, m_handle_height,
-                         m_handle_offset_y, m_handle_offset_x, m_handle_width;
+                         m_handle_offset_y, m_handle_offset_x, m_handle_width,
+                         m_probe_light_pixel_x, m_probe_light_pixel_y;
     FbTk::BorderTheme m_border, m_light_border;
 
     FbTk::GContext m_button_pic_gc;

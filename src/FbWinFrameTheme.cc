@@ -50,19 +50,14 @@ FbWinFrameTheme::FbWinFrameTheme(int screen_num, const std::string &extra,
     m_handle_width(*this, "window.handle.width", "Window.Handle.Width"),
     m_border(*this, "window" + extra, "Window" + altextra),
     m_light_border(*this, "window" + extra + ".light", "Window" + altextra + ".Light"),
+    m_probe_light_pixel_x(*this, "window.light.probePixelX", "Window.Light.ProbePixelX"),
+    m_probe_light_pixel_y(*this, "window.light.probePixelY", "Window.Light.ProbePixelY"),
     m_button_pic_gc(RootWindow(FbTk::App::instance()->display(), screen_num)),
     m_alpha(255),
     m_iconbar_theme(screen_num, "window.label" + extra,
                     "Window.Label" + altextra) {
 
     *m_title_height = 0;
-    *m_title_offset_y = 0;
-    *m_title_offset_x = 0;
-    *m_title_width = 0;
-    *m_handle_height = 0;
-    *m_handle_offset_y = 0;
-    *m_handle_offset_x = 0;
-    *m_handle_width = 0;
     m_font->load(FbTk::Font::DEFAULT_FONT);
 
     // create cursors
