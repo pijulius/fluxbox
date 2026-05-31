@@ -128,7 +128,6 @@ public:
     const bool getDefaultInternalTabs() const { return *resource.default_internal_tabs; }
     const bool getTabsUsePixmap() const { return *resource.tabs_use_pixmap; }
     const bool getMaxOverTabs() const { return *resource.max_over_tabs; }
-    const bool getInvisibleHandles() const { return *resource.invisible_handles; }
 
     unsigned int getTabWidth() const { return *resource.tab_width; }
     /// @return the slit, @see Slit

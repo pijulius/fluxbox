@@ -80,6 +80,7 @@ public:
     int handleOffsetY() const { return *m_handle_offset_y; }
     int handleOffsetX() const { return *m_handle_offset_x; }
     int handleWidth() const { return *m_handle_width; }
+    bool handleInvisible() const { return *m_handle_invisible; }
 
     int probeLightPixelX() const { return *m_probe_light_pixel_x; }
     int probeLightPixelY() const { return *m_probe_light_pixel_y; }
@@ -106,6 +107,7 @@ private:
                          m_title_width, m_bevel_width, m_handle_height,
                          m_handle_offset_y, m_handle_offset_x, m_handle_width,
                          m_probe_light_pixel_x, m_probe_light_pixel_y;
+    FbTk::ThemeItem<bool> m_handle_invisible;
     FbTk::BorderTheme m_border, m_light_border;
 
     FbTk::GContext m_button_pic_gc;

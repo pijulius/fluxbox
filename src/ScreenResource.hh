@@ -42,8 +42,7 @@ struct ScreenResource {
        workspace_warping_vertical,
        show_window_pos,
        auto_raise,
-       click_raises,
-       invisible_handles;
+       click_raises;
 
     FbTk::Resource<std::string> default_deco;
     FbTk::Resource<FbWinFrame::TabPlacement> tab_placement;
