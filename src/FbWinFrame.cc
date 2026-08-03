@@ -1462,14 +1462,21 @@ void FbWinFrame::applyTabContainer() {
         btn->reconfigTheme();
     }
 
-    if (m_tab_container.size() > 1) {
+    if (m_tabmode == EXTERNAL) {
+        if (m_tab_container.size() > 1) {
+            if (m_visible && !m_tab_visible) {
+                m_tab_visible = true;
+                m_tab_container.show();
+            }
+        } else if (m_tab_visible) {
+            m_tab_visible = false;
+            m_tab_container.hide();
+        }
+    } else {
         if (m_visible && !m_tab_visible) {
             m_tab_visible = true;
             m_tab_container.show();
         }
-    } else if (m_tab_visible) {
-        m_tab_visible = false;
-        m_tab_container.hide();
     }
 }
 
