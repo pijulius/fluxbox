@@ -702,6 +702,10 @@ void FbWinFrame::setClientWindow(FbTk::FbWindow &win) {
     win.setEventMask(NoEventMask);
     win.reparent(m_window, clientArea().x(), clientArea().y());
 
+    const FbTk::Color &bg = m_light ? m_theme->lightBackgroundColor() : m_theme->backgroundColor();
+    if (bg.isAllocated())
+        win.setBackgroundColor(bg);
+
     m_window.setEventMask(ButtonPressMask | ButtonReleaseMask |
                           ButtonMotionMask | EnterWindowMask |
                           LeaveWindowMask | SubstructureRedirectMask);

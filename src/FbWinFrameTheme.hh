@@ -51,6 +51,8 @@ public:
     //@}
 
     const FbTk::Color &buttonColor() const { return *m_button_color; }
+    const FbTk::Color &backgroundColor() const { return *m_background_color; }
+    const FbTk::Color &lightBackgroundColor() const { return *m_light_background_color; }
     FbTk::Font &font() { return *m_font; }
     GC buttonPicGC() const { return m_button_pic_gc.gc(); }
 
@@ -99,7 +101,7 @@ private:
     FbTk::ThemeItem<FbTk::Texture> m_title, m_handle, m_button,
                                    m_button_pressed, m_grip;
 
-    FbTk::ThemeItem<FbTk::Color> m_button_color;
+    FbTk::ThemeItem<FbTk::Color> m_button_color, m_background_color, m_light_background_color;
     FbTk::ThemeItem<FbTk::Font> m_font;
     FbTk::ThemeItem<FbTk::Shape::ShapePlace> m_shape_place;
 
