@@ -1546,8 +1546,11 @@ void Remember::setupFrame(FluxboxWindow &win) {
     if (app->fullscreenstate_remember)
         win.setFullscreen(app->fullscreenstate);
 
-    if (app->islight_remember)
+    if (app->islight_remember) {
         winclient.isLight(app->islight, true);
+        win.frame().isLight(app->islight);
+        win.frame().applyDecorations();
+    }
 
     if (app->clickraises_remember)
         win.setClickRaises(app->clickraises);
