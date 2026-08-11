@@ -201,6 +201,8 @@ FbWinFrame::FbWinFrame(BScreen &screen, unsigned int client_depth,
 
 FbWinFrame::~FbWinFrame() {
     removeEventHandler();
+    if (m_background_pm)
+        m_imagectrl.removeImage(m_background_pm);
     removeAllButtons();
 }
 
@@ -692,6 +694,8 @@ void FbWinFrame::moveLabelButtonRightOf(FbTk::TextButton &btn, const FbTk::TextB
 
 void FbWinFrame::setClientWindow(FbTk::FbWindow &win) {
 
+    m_client_win = &win;
+
     win.setBorderWidth(0);
 
     XChangeSaveSet(win.display(), win.window(), SetModeInsert);
@@ -701,10 +705,6 @@ void FbWinFrame::setClientWindow(FbTk::FbWindow &win) {
     // we need to mask this so we don't get unmap event
     win.setEventMask(NoEventMask);
     win.reparent(m_window, clientArea().x(), clientArea().y());
-
-    const FbTk::Color &bg = m_light ? m_theme->lightBackgroundColor() : m_theme->backgroundColor();
-    if (bg.isAllocated())
-        win.setBackgroundColor(bg);
 
     m_window.setEventMask(ButtonPressMask | ButtonReleaseMask |
                           ButtonMotionMask | EnterWindowMask |
@@ -1011,6 +1011,24 @@ void FbWinFrame::reconfigure() {
 
         m_clientarea.moveResize(0, client_top,
                                 m_window.width(), client_height);
+
+        if (m_client_win) {
+            const FbTk::Texture &bg_tex = m_light ? m_theme->lightBackground() : m_theme->background();
+            if (bg_tex.usePixmap()) {
+                if ((!m_client_win->hasBackgroundPixmap() || (bg_tex.type() & FbTk::Texture::CENTERED))) {
+                    if (m_background_pm)
+                        m_imagectrl.removeImage(m_background_pm);
+                    m_background_pm = m_imagectrl.renderImage(clientArea().width(), clientArea().height(), bg_tex);
+                    if (m_background_pm)
+                        m_client_win->setBackgroundPixmap(m_background_pm);
+                }
+
+            } else if (!m_client_win->hasBackgroundColor()) {
+                const FbTk::Color &bg = bg_tex.color();
+                if (bg.isAllocated())
+                    m_client_win->setBackgroundColor(bg);
+            }
+        }
     }
 
     gravityTranslate(grav_x, grav_y, sizeHints().win_gravity, m_active_orig_client_bw, false);
@@ -1407,6 +1425,9 @@ void FbWinFrame::init() {
     m_grip_face.pm[UNFOCUS] = m_grip_face.pm[FOCUS] = 0;
 
     m_button_size = s_button_size;
+
+    m_background_pm = None;
+    m_client_win = 0;
 
     m_label.setBorderWidth(0);
 

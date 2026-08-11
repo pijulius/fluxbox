@@ -68,7 +68,8 @@ public:
         INVERT =         0x10000, ///< inverted image
         PARENTRELATIVE = 0x20000,
         INTERLACED =     0x40000,
-        TILED =          0x80000  ///< tiled pixmap
+        TILED =          0x80000,  ///< tiled pixmap
+        CENTERED =       0x100000
     };
 
     Texture():m_type(0) { }

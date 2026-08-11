@@ -79,6 +79,8 @@ public:
     virtual ~FbWindow();
     virtual void setBackgroundColor(const FbTk::Color &bg_color);
     virtual void setBackgroundPixmap(Pixmap bg_pixmap);
+    virtual bool hasBackgroundColor() { return m_lastbg_color_set; };
+    virtual bool hasBackgroundPixmap() { return m_lastbg_pm; };
     // call when background is freed, and new one not ready yet
     virtual void invalidateBackground();
     virtual void setBorderColor(const FbTk::Color &border_color);

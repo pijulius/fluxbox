@@ -1,4 +1,4 @@
-// Texture.hh for Fluxbox Window Manager 
+// Texture.hh for Fluxbox Window Manager
 // Copyright (c) 2002 - 2006 Henrik Kinnunen (fluxgen at fluxbox dot org)
 //
 // from Image.cc for Blackbox - an X11 Window manager
@@ -109,6 +109,9 @@ void Texture::setFromString(const char * const texture_str) {
 
         if (strstr(ts, "tiled"))
             addType(Texture::TILED);
+
+        if (strstr(ts, "centered"))
+            addType(Texture::CENTERED);
     }
 }
 

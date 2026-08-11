@@ -53,6 +53,8 @@ public:
     void resize(unsigned int width, unsigned int height);
     /// tiles the pixmap to specified size
     void tile(unsigned int width, unsigned int height);
+    /// centers the pixmap to specified size
+    void center(unsigned int width, unsigned int height);
     /// drops pixmap and returns it
     Pixmap release();
 

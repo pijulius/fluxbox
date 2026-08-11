@@ -357,6 +357,44 @@ void FbPixmap::tile(unsigned int dest_width, unsigned int dest_height) {
 
 }
 
+void FbPixmap::center(unsigned int dest_width, unsigned int dest_height) {
+    if (drawable() == 0 ||
+        (dest_width == width() && dest_height == height()))
+        return;
+
+    XImage *bg_image = XGetImage(display(), drawable(),
+                                  0, 0, // pos
+                                  1, 1, // size
+                                  ~0, // plane mask
+                                  ZPixmap); // format
+    if (bg_image == 0)
+        return;
+
+    unsigned long bg_color = XGetPixel(bg_image, 0, 0);
+    XDestroyImage(bg_image);
+
+    FbPixmap new_pm(drawable(), width(), height(), depth());
+
+    new_pm.copy(m_pm, 0, 0);
+
+    resize(dest_width, dest_height);
+
+    FbTk::GContext gc(*this);
+
+    gc.setFillStyle(FillSolid);
+    gc.setForeground(bg_color);
+    fillRectangle(gc.gc(), 0, 0, dest_width, dest_height);
+
+    XCopyArea(
+        display(),
+        new_pm.drawable(),
+        m_pm,
+        gc.gc(),
+        0, 0,
+        new_pm.width(), new_pm.height(),
+        dest_width/2 - new_pm.width()/2, dest_height/2 - new_pm.height()/2);
+
+}
 
 
 void FbPixmap::resize(unsigned int width, unsigned int height) {

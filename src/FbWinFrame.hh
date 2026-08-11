@@ -367,6 +367,8 @@ private:
 
     FbTk::Shape m_shape;
     bool m_light;
+    Pixmap m_background_pm;
+    FbTk::FbWindow* m_client_win; ///< client window, for background pixmap resize
 };
 
 #endif // FBWINFRAME_HH
